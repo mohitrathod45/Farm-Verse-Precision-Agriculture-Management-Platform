@@ -1,0 +1,42 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #2E7D32;
+  --color-secondary: #66BB6A;
+  --color-bg-light: #FAFFF5;
+  --color-accent: #8D6E63;
+  --color-text-dark: #263238;
+
+  --font-sans: 'Inter', 'Poppins', system-ui, -apple-system, sans-serif;
+  --font-display: 'Poppins', 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: #FAFFF5; /* Fallback same as bg-light */
+  color: #263238; /* Fallback same as text-dark */
+  font-family: 'Inter', 'Poppins', system-ui, -apple-system, sans-serif;
+  overflow-x: hidden;
+  margin: 0;
+}
+
+/* Custom scrollbar to match the green organic design theme */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #FAFFF5;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #2E7D32;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #1B5E20;
+}
