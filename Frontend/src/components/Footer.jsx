@@ -1,4 +1,5 @@
-import { RiLeafLine, RiTwitterXLine, RiLinkedinBoxLine, RiGithubLine, RiSeedlingLine } from 'react-icons/ri';
+import { RiLeafLine, RiLinkedinBoxLine, RiGithubLine } from 'react-icons/ri';
+import { Link } from 'react-router-dom';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -6,19 +7,20 @@ const Footer = () => {
   const quickLinks = [
     { name: 'Home', href: '#home' },
     { name: 'Features', href: '#features' },
+    { name: 'How It Works', href: '#how-it-works' },
     { name: 'About', href: '#about' },
+    { name: 'FAQ', href: '#faq' },
   ];
 
   const socialLinks = [
-    { name: 'Twitter', icon: RiTwitterXLine, href: 'https://twitter.com' },
     { name: 'LinkedIn', icon: RiLinkedinBoxLine, href: 'https://linkedin.com' },
     { name: 'GitHub', icon: RiGithubLine, href: 'https://github.com' },
   ];
 
   return (
-    <footer className="bg-bg-light border-t border-gray-100 pt-16 pb-8 relative">
+    <footer className="bg-[#F4F8F2]/60 border-t border-border-light pt-16 pb-8 relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12 pb-12 border-b border-gray-200/60">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12 pb-12 border-b border-border-light/80">
           
           {/* Column 1: Branding & Description */}
           <div className="md:col-span-5 space-y-6 text-left">
@@ -30,7 +32,7 @@ const Footer = () => {
                 Farm<span className="text-primary font-extrabold">Verse</span>
               </span>
             </a>
-            <p className="text-sm text-text-dark/75 leading-relaxed max-w-sm">
+            <p className="text-sm text-text-muted leading-relaxed max-w-sm">
               FarmVerse is a modern web application that helps farmers digitally manage farms, crops, irrigation schedules, fertilizer records, and harvest information through a simple and user-friendly platform.
             </p>
             {/* Social Icons */}
@@ -43,7 +45,7 @@ const Footer = () => {
                     href={social.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center justify-center w-9 h-9 rounded-xl bg-white border border-gray-200 text-text-dark/70 hover:text-white hover:bg-primary hover:border-primary transition-all duration-200 shadow-xs"
+                    className="flex items-center justify-center w-9 h-9 rounded-xl bg-white border border-border-light text-text-muted hover:text-white hover:bg-primary hover:border-primary transition-all duration-200 shadow-xs"
                     aria-label={social.name}
                   >
                     <Icon className="text-base" />
@@ -55,7 +57,7 @@ const Footer = () => {
 
           {/* Column 2: Quick Links */}
           <div className="md:col-span-3 space-y-4 text-left">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-text-dark/40">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-text-muted">
               Quick Links
             </h4>
             <ul className="space-y-2.5">
@@ -63,7 +65,7 @@ const Footer = () => {
                 <li key={link.name}>
                   <a
                     href={link.href}
-                    className="text-sm font-semibold text-text-dark/80 hover:text-primary transition-colors duration-150"
+                    className="text-sm font-semibold text-text-muted hover:text-primary transition-colors duration-150"
                   >
                     {link.name}
                   </a>
@@ -72,20 +74,21 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Column 3: Project Information */}
+          {/* Column 3: Contact & Project Info */}
           <div className="md:col-span-4 space-y-4 text-left">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-text-dark/40">
-              Project Information
+            <h4 className="text-xs font-bold uppercase tracking-wider text-text-muted">
+              Contact
             </h4>
-            <div className="space-y-3">
-              <div className="flex items-center space-x-2 text-sm font-semibold text-text-dark/80">
-                <RiSeedlingLine className="text-primary text-base" />
-                <span>Java Full Stack Project</span>
-              </div>
-              <ul className="text-xs text-text-dark/65 leading-relaxed space-y-1">
-                <li><strong>Frontend:</strong> React + Tailwind CSS</li>
-                <li><strong>Backend:</strong> Spring Boot</li>
-                <li><strong>Database:</strong> MySQL</li>
+            <div className="space-y-3 text-sm text-text-muted font-semibold">
+              <p>Email: <a href="mailto:support@farmverse.com" className="text-primary hover:underline">support@farmverse.com</a></p>
+              <p>Location: India</p>
+              <div className="h-px bg-border-light/80 my-3" />
+              <p className="text-xs font-bold uppercase tracking-wider text-text-muted/60">
+                Technology Stack
+              </p>
+              <ul className="text-xs text-text-muted/85 font-medium space-y-1">
+                <li>React + Spring Boot</li>
+                <li>Tailwind CSS + MySQL</li>
               </ul>
             </div>
           </div>
@@ -94,11 +97,11 @@ const Footer = () => {
 
         {/* Bottom copyright row */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between space-y-4 sm:space-y-0 text-center sm:text-left">
-          <p className="text-xs font-medium text-text-dark/60">
-            &copy; {currentYear} FarmVerse. All Rights Reserved.
+          <p className="text-xs font-medium text-text-muted">
+            &copy; 2026 FarmVerse. All Rights Reserved.
           </p>
-          <p className="text-xs font-medium text-text-dark/60 flex items-center space-x-1">
-            <span>Developed by Team FarmVerse</span>
+          <p className="text-xs font-medium text-text-muted">
+            Developed by Team FarmVerse
           </p>
         </div>
       </div>

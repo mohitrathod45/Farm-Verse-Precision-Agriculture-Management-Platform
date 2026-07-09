@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { RiLeafLine, RiMenu3Line, RiCloseLine } from 'react-icons/ri';
+import { Link } from 'react-router-dom';
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -20,7 +21,9 @@ const Navbar = () => {
   const navLinks = [
     { name: 'Home', href: '#home' },
     { name: 'Features', href: '#features' },
+    { name: 'How It Works', href: '#how-it-works' },
     { name: 'About', href: '#about' },
+    { name: 'FAQ', href: '#faq' },
   ];
 
   return (
@@ -34,8 +37,8 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between">
           {/* Logo & Branding */}
-          <a
-            href="#home"
+          <Link
+            to="/"
             className="flex items-center space-x-2 group focus:outline-none"
           >
             <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-primary/10 text-primary transition-all duration-300 group-hover:bg-primary group-hover:text-white">
@@ -44,7 +47,7 @@ const Navbar = () => {
             <span className="text-xl font-bold tracking-tight text-text-dark font-display">
               Farm<span className="text-primary font-extrabold">Verse</span>
             </span>
-          </a>
+          </Link>
 
           {/* Desktop Navigation Links (Center) */}
           <div className="hidden md:flex items-center space-x-8">
@@ -62,12 +65,12 @@ const Navbar = () => {
 
           {/* Desktop Auth Buttons (Right) */}
           <div className="hidden md:flex items-center space-x-4">
-            <button className="text-sm font-semibold text-text-dark hover:text-primary transition-colors duration-200 px-4 py-2 hover:bg-bg-light rounded-xl">
+            <Link to="/login" className="text-sm font-semibold text-text-dark hover:text-primary transition-colors duration-200 px-4 py-2 hover:bg-bg-light rounded-xl">
               Login
-            </button>
-            <button className="text-sm font-semibold text-white bg-primary hover:bg-primary/90 transition-all duration-200 px-5 py-2.5 rounded-xl shadow-sm hover:shadow hover:-translate-y-0.5">
+            </Link>
+            <Link to="/register" className="text-sm font-semibold text-white bg-primary hover:bg-primary/90 transition-all duration-200 px-5 py-2.5 rounded-xl shadow-sm hover:shadow hover:-translate-y-0.5">
               Register
-            </button>
+            </Link>
           </div>
 
           {/* Mobile Hamburger Toggle */}
@@ -123,18 +126,20 @@ const Navbar = () => {
 
           {/* Auth Actions */}
           <div className="space-y-3 pt-6 border-t border-gray-100">
-            <button
-              className="w-full text-center text-sm font-semibold text-text-dark hover:text-primary transition-colors duration-200 py-3 hover:bg-bg-light rounded-xl"
+            <Link
+              to="/login"
+              className="block w-full text-center text-sm font-semibold text-text-dark hover:text-primary transition-colors duration-200 py-3 hover:bg-bg-light rounded-xl"
               onClick={() => setIsMobileMenuOpen(false)}
             >
               Login
-            </button>
-            <button
-              className="w-full text-center text-sm font-semibold text-white bg-primary hover:bg-primary/90 transition-all duration-200 py-3 rounded-xl shadow-sm hover:shadow"
+            </Link>
+            <Link
+              to="/register"
+              className="block w-full text-center text-sm font-semibold text-white bg-primary hover:bg-primary/90 transition-all duration-200 py-3 rounded-xl shadow-sm hover:shadow"
               onClick={() => setIsMobileMenuOpen(false)}
             >
               Register
-            </button>
+            </Link>
           </div>
         </div>
       </div>

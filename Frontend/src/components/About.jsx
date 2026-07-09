@@ -1,13 +1,40 @@
-import { RiMap2Line, RiPlantLine, RiDropLine, RiBarChart2Line } from 'react-icons/ri';
+import { RiLayoutMasonryLine, RiShieldKeyholeLine, RiCpuLine, RiUserSmileLine } from 'react-icons/ri';
 
 const About = () => {
+  const highlights = [
+    {
+      title: 'Modern UI',
+      description: 'Clean, elegant, and interactive interfaces built for modern web devices.',
+      icon: RiLayoutMasonryLine,
+      color: 'text-primary border-primary/20 bg-primary/5',
+    },
+    {
+      title: 'Secure Data',
+      description: 'Robust authentication layer securing critical farm records.',
+      icon: RiShieldKeyholeLine,
+      color: 'text-secondary border-secondary/20 bg-secondary/5',
+    },
+    {
+      title: 'Scalable Architecture',
+      description: 'Engineered with full stack modular patterns ready for cloud deployment.',
+      icon: RiCpuLine,
+      color: 'text-sky-500 border-sky-500/20 bg-sky-500/5',
+    },
+    {
+      title: 'Easy to Use',
+      description: 'Simplified dashboards optimized for quick daily agricultural logs.',
+      icon: RiUserSmileLine,
+      color: 'text-orange-500 border-orange-500/20 bg-orange-500/5',
+    },
+  ];
+
   return (
-    <section id="about" className="py-24 bg-bg-light/60 relative overflow-hidden">
+    <section id="about" className="py-24 bg-[#F4F8F2]/60 border-y border-border-light relative overflow-hidden">
       {/* Decorative vectors */}
       <div className="absolute top-1/2 left-5 w-72 h-72 bg-primary/10 rounded-full blur-3xl -z-10" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
           
           {/* Left Column: Premium SVG illustration of a digital monitoring dashboard */}
           <div className="lg:col-span-6 flex justify-center order-2 lg:order-1">
@@ -98,64 +125,35 @@ const About = () => {
               <span className="text-xs font-bold uppercase tracking-wider text-primary bg-primary/10 px-4 py-1.5 rounded-full">
                 About the Platform
               </span>
-              <h2 className="text-3xl sm:text-4xl font-extrabold text-text-dark font-display">
+              <h2 className="text-3xl sm:text-4xl font-extrabold text-text-dark font-display leading-tight">
                 About FarmVerse
               </h2>
             </div>
             
             <p className="text-base sm:text-lg text-text-dark font-medium leading-relaxed">
-              FarmVerse is a Precision Agriculture Management Platform developed using modern Java Full Stack technologies.
+              FarmVerse is a modern Precision Agriculture Management System built using Java Full Stack technologies.
             </p>
 
-            <p className="text-sm sm:text-base text-text-dark/75 leading-relaxed">
-              It enables farmers to digitally manage farm information, crop records, irrigation schedules, fertilizer usage, and agricultural activities through a simple and user-friendly application.
+            <p className="text-sm sm:text-base text-text-muted leading-relaxed">
+              It helps farmers digitally manage farms, crops, irrigation schedules, fertilizer applications, and reports through one centralized platform.
             </p>
 
-            <p className="text-sm sm:text-base text-text-dark/75 leading-relaxed">
-              Our goal is to simplify farm management and improve productivity using digital solutions.
-            </p>
-
-            {/* Architecture Details Grid */}
+            {/* Highlights Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-4">
-              <div className="flex items-start space-x-3">
-                <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-white border border-gray-100 text-primary shadow-xs">
-                  <RiMap2Line className="text-xl" />
-                </div>
-                <div>
-                  <h4 className="text-sm font-bold text-text-dark">Farm Management</h4>
-                  <p className="text-xs text-text-dark/65">Manage and organize multiple farms from one platform.</p>
-                </div>
-              </div>
-
-              <div className="flex items-start space-x-3">
-                <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-white border border-gray-100 text-primary shadow-xs">
-                  <RiPlantLine className="text-xl" />
-                </div>
-                <div>
-                  <h4 className="text-sm font-bold text-text-dark">Crop Management</h4>
-                  <p className="text-xs text-text-dark/65">Maintain crop details, cultivation records, and harvest information.</p>
-                </div>
-              </div>
-
-              <div className="flex items-start space-x-3">
-                <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-white border border-gray-100 text-primary shadow-xs">
-                  <RiDropLine className="text-xl" />
-                </div>
-                <div>
-                  <h4 className="text-sm font-bold text-text-dark">Irrigation Management</h4>
-                  <p className="text-xs text-text-dark/65">Track and schedule irrigation activities for better farm planning.</p>
-                </div>
-              </div>
-
-              <div className="flex items-start space-x-3">
-                <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-white border border-gray-100 text-primary shadow-xs">
-                  <RiBarChart2Line className="text-xl" />
-                </div>
-                <div>
-                  <h4 className="text-sm font-bold text-text-dark">Reports & Analytics</h4>
-                  <p className="text-xs text-text-dark/65">View farm activities, progress, and summarized reports.</p>
-                </div>
-              </div>
+              {highlights.map((h, index) => {
+                const Icon = h.icon;
+                return (
+                  <div key={index} className="flex items-start space-x-3 bg-white p-4 rounded-2xl border border-border-light shadow-xs">
+                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border ${h.color}`}>
+                      <Icon className="text-xl" />
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-bold text-text-dark">{h.title}</h4>
+                      <p className="text-xs text-text-muted mt-1 leading-relaxed">{h.description}</p>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
 

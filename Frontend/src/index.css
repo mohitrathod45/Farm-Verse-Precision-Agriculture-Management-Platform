@@ -3,9 +3,12 @@
 @theme {
   --color-primary: #2E7D32;
   --color-secondary: #66BB6A;
-  --color-bg-light: #FAFFF5;
-  --color-accent: #8D6E63;
+  --color-bg-light: #F4F8F2;
+  --color-accent: #F9A826;
+  --color-sky: #4FACFE;
   --color-text-dark: #263238;
+  --color-text-muted: #607D8B;
+  --color-border-light: #E6EFE5;
 
   --font-sans: 'Inter', 'Poppins', system-ui, -apple-system, sans-serif;
   --font-display: 'Poppins', 'Inter', system-ui, -apple-system, sans-serif;
@@ -16,7 +19,7 @@ html {
 }
 
 body {
-  background-color: #FAFFF5; /* Fallback same as bg-light */
+  background-color: #F8FAF5; /* Fallback same as bg-light */
   color: #263238; /* Fallback same as text-dark */
   font-family: 'Inter', 'Poppins', system-ui, -apple-system, sans-serif;
   overflow-x: hidden;

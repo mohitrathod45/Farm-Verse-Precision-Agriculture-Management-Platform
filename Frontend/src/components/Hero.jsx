@@ -1,4 +1,5 @@
 import { RiArrowRightLine, RiPlayLine } from 'react-icons/ri';
+import { Link } from 'react-router-dom';
 
 const Hero = () => {
   return (
@@ -29,20 +30,18 @@ const Hero = () => {
             </h1>
 
             <p className="text-base sm:text-lg text-text-dark/75 max-w-xl leading-relaxed">
-              Empowering farmers with a modern digital platform to efficiently
-              manage farms, monitor agricultural activities, and improve
-              productivity. Take control of your yield with real-time insights.
+              Modern digital agriculture platform that helps farmers efficiently manage farms, crops, irrigation schedules, fertilizer usage, and reports from one centralized system.
             </p>
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center space-y-4 sm:space-y-0 sm:space-x-4 pb-12">
-              <a
-                href="#features"
+              <Link
+                to="/register"
                 className="inline-flex items-center justify-center space-x-2 text-sm font-semibold text-white bg-primary hover:bg-primary/95 transition-all duration-300 px-8 py-4 rounded-xl shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 hover:-translate-y-0.5 focus:outline-none"
               >
                 <span>Get Started</span>
                 <RiArrowRightLine className="text-lg" />
-              </a>
+              </Link>
               <a
                 href="#about"
                 className="inline-flex items-center justify-center space-x-2 text-sm font-semibold text-text-dark bg-white hover:bg-bg-light transition-all duration-300 px-8 py-4 rounded-xl border border-gray-200 hover:border-primary/30 hover:-translate-y-0.5 focus:outline-none"
