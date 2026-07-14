@@ -1,3 +1,4 @@
+import axios from "axios";
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { RiPlantLine, RiMailLine, RiLockPasswordLine, RiUserLine, RiPhoneLine, RiErrorWarningLine, RiCheckLine } from 'react-icons/ri';
@@ -27,31 +28,66 @@ const Register = () => {
     }
   };
 
-  const handleRegister = (e) => {
-    e.preventDefault();
-    const newErrors = {};
+  const handleRegister = async (e) => {
+  e.preventDefault();
 
-    if (!formData.fullName.trim()) newErrors.fullName = 'Full Name is required';
-    if (!formData.email.trim()) newErrors.email = 'Email Address is required';
-    if (!formData.mobileNumber.trim()) newErrors.mobileNumber = 'Mobile Number is required';
-    if (!formData.password) newErrors.password = 'Password is required';
-    if (!formData.confirmPassword) newErrors.confirmPassword = 'Confirm Password is required';
-    else if (formData.password !== formData.confirmPassword) newErrors.confirmPassword = 'Passwords do not match';
-    
-    if (!formData.agreeTerms) newErrors.agreeTerms = 'You must agree to the Terms & Conditions';
+  const newErrors = {};
 
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      return;
+  if (!formData.fullName.trim())
+    newErrors.fullName = "Full Name is required";
+
+  if (!formData.email.trim())
+    newErrors.email = "Email Address is required";
+
+  if (!formData.mobileNumber.trim())
+    newErrors.mobileNumber = "Mobile Number is required";
+
+  if (!formData.password)
+    newErrors.password = "Password is required";
+
+  if (!formData.confirmPassword)
+    newErrors.confirmPassword = "Confirm Password is required";
+
+  if (formData.password !== formData.confirmPassword)
+    newErrors.confirmPassword = "Passwords do not match";
+
+  if (!formData.agreeTerms)
+    newErrors.agreeTerms = "Accept Terms & Conditions";
+
+  if (Object.keys(newErrors).length > 0) {
+    setErrors(newErrors);
+    return;
+  }
+
+  try {
+
+    const response = await axios.post(
+      "http://localhost:8080/api/auth/register",
+      {
+        fullName: formData.fullName,
+        email: formData.email,
+        password: formData.password,
+        phone: formData.mobileNumber
+      }
+    );
+
+    alert(response.data.message);
+
+    navigate("/login");
+
+  } catch (error) {
+
+    if (error.response) {
+      alert(error.response.data.message);
+    } else {
+      alert("Unable to connect to server");
     }
 
-    // Validation passes, show success toast and navigate
-    setShowToast(true);
-    setTimeout(() => {
-      setShowToast(false);
-      navigate('/login');
-    }, 2500);
-  };
+    console.log(error);
+
+  }
+
+};
 
   return (
     <div className="min-h-screen bg-bg-light flex flex-col font-sans text-text-dark">
