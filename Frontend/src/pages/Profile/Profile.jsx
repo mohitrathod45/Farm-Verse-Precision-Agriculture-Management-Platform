@@ -1,6 +1,50 @@
-import { RiEditLine, RiLockPasswordLine, RiMailLine, RiPhoneLine, RiMapPin2Line, RiCalendarLine, RiShieldCheckLine, RiTimeLine } from 'react-icons/ri';
+import { useState, useEffect } from "react";
+import axios from "axios";
+import {
+  RiEditLine,
+  RiLockPasswordLine,
+  RiMailLine,
+  RiPhoneLine,
+  RiMapPin2Line,
+  RiCalendarLine,
+  RiShieldCheckLine,
+  RiTimeLine
+} from "react-icons/ri";
 
 const Profile = () => {
+  const [profile, setProfile] = useState(null);
+  useEffect(() => {
+
+        const fetchProfile = async () => {
+
+            try {
+
+                const token = localStorage.getItem("token");
+
+                const response = await axios.get(
+                    "http://localhost:8080/api/profile",
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    }
+                );
+
+                setProfile(response.data);
+
+            } catch (error) {
+                console.log(error);
+            }
+
+        };
+
+        fetchProfile();
+
+    }, []);
+
+  if (!profile) {
+    return <h2 className="text-center mt-20">Loading...</h2>;
+  }
   return (
     <>
       {/* Header */}
@@ -17,22 +61,22 @@ const Profile = () => {
             <div className="h-28 bg-gradient-to-r from-primary to-secondary relative">
               <div className="absolute -bottom-10 left-6">
                 <div className="w-20 h-20 rounded-2xl bg-white border-4 border-white shadow-md flex items-center justify-center text-primary text-2xl font-extrabold">
-                  FA
+                  {profile.fullName.charAt(0).toUpperCase()}
                 </div>
               </div>
             </div>
             {/* Info */}
             <div className="pt-14 pb-6 px-6">
-              <h2 className="text-xl font-extrabold text-text-dark">Farmer Admin</h2>
-              <p className="text-sm text-text-muted mt-0.5">Organic Farm Owner</p>
+              <h2 className="text-xl font-extrabold text-text-dark">{profile.fullName}</h2>
+              <p className="text-sm text-text-muted mt-0.5">{profile.role}</p>
               <div className="mt-5 space-y-3">
                 <div className="flex items-center space-x-3 text-sm text-text-muted">
                   <RiMailLine className="text-primary shrink-0" />
-                  <span>farmer@farmverse.com</span>
+                  <span>{profile.email}</span>
                 </div>
                 <div className="flex items-center space-x-3 text-sm text-text-muted">
                   <RiPhoneLine className="text-primary shrink-0" />
-                  <span>+91 98765 43210</span>
+                  <span>{profile.phone}</span>
                 </div>
                 <div className="flex items-center space-x-3 text-sm text-text-muted">
                   <RiMapPin2Line className="text-primary shrink-0" />
@@ -58,13 +102,13 @@ const Profile = () => {
             <h3 className="text-lg font-bold text-text-dark mb-5">Personal Information</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               {[
-                { label: 'Full Name', value: 'Farmer Admin' },
-                { label: 'Email Address', value: 'farmer@farmverse.com' },
-                { label: 'Mobile Number', value: '+91 98765 43210' },
-                { label: 'Village', value: 'Ranga Reddy' },
-                { label: 'District', value: 'Hyderabad' },
-                { label: 'State', value: 'Telangana' },
-              ].map((item, i) => (
+                  { label: "Full Name", value: profile.fullName },
+                  { label: "Email Address", value: profile.email },
+                  { label: "Mobile Number", value: profile.phone },
+                  { label: "Role", value: profile.role },
+                  { label: "User ID", value: profile.userId },
+                  { label: "Created At", value: new Date(profile.createdAt).toLocaleString() },
+                ].map((item, i) => (
                 <div key={i}>
                   <p className="text-xs font-bold text-text-muted uppercase tracking-wider mb-1">{item.label}</p>
                   <p className="text-sm font-semibold text-text-dark bg-bg-light rounded-xl px-4 py-2.5 border border-border-light">{item.value}</p>
@@ -81,7 +125,7 @@ const Profile = () => {
                 <RiCalendarLine className="text-xl text-primary mt-0.5 shrink-0" />
                 <div>
                   <p className="text-xs font-bold text-text-muted uppercase tracking-wider">Joined Date</p>
-                  <p className="text-sm font-bold text-text-dark mt-0.5">15 January 2026</p>
+                  <p className="text-sm font-bold text-text-dark mt-0.5">{new Date(profile.createdAt).toLocaleDateString()}</p>
                 </div>
               </div>
               <div className="flex items-start space-x-3 p-4 rounded-xl bg-bg-light border border-border-light">

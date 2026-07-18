@@ -11,7 +11,23 @@ public class ProfileResponse {
     private String role;
     private LocalDateTime createdAt;
 
-    public ProfileResponse() {}
+    public ProfileResponse() {
+    }
+
+    public ProfileResponse(Integer userId,
+                           String fullName,
+                           String email,
+                           String phone,
+                           String role,
+                           LocalDateTime createdAt) {
+
+        this.userId = userId;
+        this.fullName = fullName;
+        this.email = email;
+        this.phone = phone;
+        this.role = role;
+        this.createdAt = createdAt;
+    }
 
     public Integer getUserId() {
         return userId;

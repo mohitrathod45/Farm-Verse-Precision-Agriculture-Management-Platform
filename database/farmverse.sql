@@ -1,4 +1,6 @@
 USE farmverse;
+SELECT user_id, full_name, email, password FROM users;
+select * from users;
 -- MySQL dump 10.13  Distrib 8.0.45, for Win64 (x86_64)
 --
 -- Host: localhost    Database: farmverse

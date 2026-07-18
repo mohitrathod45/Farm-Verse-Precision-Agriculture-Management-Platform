@@ -34,10 +34,10 @@ const Topbar = ({ setIsOpen }) => {
         {/* User profile */}
         <Link to="/profile" className="flex items-center space-x-2.5 group focus:outline-none">
           <div className="h-9 w-9 rounded-full bg-primary/10 border-2 border-primary/20 flex items-center justify-center">
-            <span className="text-primary font-bold text-xs">FA</span>
+            <span className="text-primary font-bold text-xs">F</span>
           </div>
           <div className="hidden sm:block">
-            <p className="text-sm font-bold text-text-dark group-hover:text-primary transition-colors leading-none">Farmer Admin</p>
+            <p className="text-sm font-bold text-text-dark group-hover:text-primary transition-colors leading-none">Farmer</p>
           </div>
         </Link>
 
