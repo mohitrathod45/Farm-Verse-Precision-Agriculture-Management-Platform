@@ -23,6 +23,8 @@ const Dashboard = () => {
     { title: 'Total Reports', value: '18', icon: RiBarChart2Line, colorClass: 'text-accent' },
   ];
 
+  const userFullName = localStorage.getItem('fullName') || 'Farmer';
+
   return (
     <>
       {/* Welcome Hero */}
@@ -31,7 +33,7 @@ const Dashboard = () => {
         <div className="relative z-10 max-w-2xl mb-6 md:mb-0">
           <p className="text-primary font-bold text-sm mb-2 uppercase tracking-wide">{today}</p>
           <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-text-dark mb-2">
-            Welcome back, Farmer! 🌱
+            Welcome back, {userFullName}! 🌱
           </h1>
           <p className="text-text-muted text-sm">
             Manage your farms, crops, irrigation schedules, fertilizer usage, and agricultural activities from one centralized dashboard.

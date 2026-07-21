@@ -59,8 +59,10 @@ const Login = () => {
         }
       );
 
-      // Save JWT Token
+      // Save JWT Token and user info
       localStorage.setItem("token", response.data.token);
+      localStorage.setItem("fullName", response.data.fullName);
+      localStorage.setItem("role", response.data.role);
 
       alert(response.data.message);
 

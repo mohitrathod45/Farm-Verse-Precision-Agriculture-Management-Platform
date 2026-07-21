@@ -3,6 +3,16 @@ import { RiMenu3Line, RiNotification3Line, RiLogoutBoxRLine } from 'react-icons/
 
 const Topbar = ({ setIsOpen }) => {
   const navigate = useNavigate();
+  const fullName = localStorage.getItem('fullName') || 'Farmer';
+  const role = localStorage.getItem('role') || 'Farmer';
+
+  const getInitials = (name) => {
+    if (!name) return 'F';
+    const parts = name.trim().split(/\s+/);
+    if (parts.length === 1) return parts[0].charAt(0).toUpperCase();
+    return (parts[0].charAt(0) + parts[parts.length - 1].charAt(0)).toUpperCase();
+  };
+  const initials = getInitials(fullName);
 
   return (
     <header className="h-16 bg-white border-b border-border-light flex items-center justify-between px-4 sm:px-6 sticky top-0 z-30 shrink-0">
@@ -31,13 +41,19 @@ const Topbar = ({ setIsOpen }) => {
 
         <div className="hidden sm:block h-5 w-px bg-border-light" />
 
-        {/* User profile */}
+         {/* User profile */}
         <Link to="/profile" className="flex items-center space-x-2.5 group focus:outline-none">
           <div className="h-9 w-9 rounded-full bg-primary/10 border-2 border-primary/20 flex items-center justify-center">
-            <span className="text-primary font-bold text-xs">F</span>
+            <span className="text-primary font-bold text-xs">{initials}</span>
           </div>
-          <div className="hidden sm:block">
-            <p className="text-sm font-bold text-text-dark group-hover:text-primary transition-colors leading-none">Farmer</p>
+
+          <div className="hidden sm:block text-left">
+            <p className="text-sm font-bold text-text-dark group-hover:text-primary transition-colors leading-none">
+              {fullName}
+            </p>
+            <p className="text-xs text-text-muted mt-1 leading-none">
+              {role}
+            </p>
           </div>
         </Link>
 
