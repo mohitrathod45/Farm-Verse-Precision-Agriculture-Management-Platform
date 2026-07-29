@@ -1,12 +1,18 @@
 import { RiInformationLine } from 'react-icons/ri';
 
-const FarmSummary = () => {
+const FarmSummary = ({ farms = [], crops = [], loading = false }) => {
+  const totalFarms = farms.length;
+  const totalArea = farms.reduce((sum, f) => sum + (parseFloat(f.area) || 0), 0).toFixed(1);
+  const mainFarmName = farms.length > 0 ? farms[0].farmName : 'No Farm Registered';
+  const soilType = farms.length > 0 && farms[0].soilType ? farms[0].soilType : 'Loamy Soil';
+  const activeCropsCount = crops.length;
+
   const summaryDetails = [
-    { label: 'Farm Name', value: 'Green Valley Farm' },
-    { label: 'Total Area', value: '15 Acres' },
-    { label: 'Primary Crop', value: 'Rice' },
-    { label: 'Soil Type', value: 'Black Soil' },
-    { label: 'Next Harvest', value: '20 August 2026', highlight: true },
+    { label: 'Primary Farm', value: mainFarmName },
+    { label: 'Total Farm Area', value: `${totalArea} Acres` },
+    { label: 'Registered Farms', value: `${totalFarms} Properties` },
+    { label: 'Primary Soil Type', value: soilType },
+    { label: 'Total Active Crops', value: `${activeCropsCount} Crops`, highlight: true },
   ];
 
   return (
@@ -19,16 +25,22 @@ const FarmSummary = () => {
           <h3 className="text-lg font-bold text-text-dark">Farm Summary</h3>
         </div>
         
-        <div className="space-y-4">
-          {summaryDetails.map((detail, index) => (
-            <div key={index} className="flex justify-between items-center border-b border-border-light pb-3 last:border-0 last:pb-0">
-              <span className="text-sm font-semibold text-text-muted">{detail.label}</span>
-              <span className={`text-sm font-bold ${detail.highlight ? 'text-primary' : 'text-text-dark'}`}>
-                {detail.value}
-              </span>
-            </div>
-          ))}
-        </div>
+        {loading ? (
+          <div className="text-center py-6">
+            <p className="text-text-muted text-xs font-semibold">Loading Summary...</p>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {summaryDetails.map((detail, index) => (
+              <div key={index} className="flex justify-between items-center border-b border-border-light pb-3 last:border-0 last:pb-0">
+                <span className="text-sm font-semibold text-text-muted">{detail.label}</span>
+                <span className={`text-sm font-bold truncate max-w-[160px] text-right ${detail.highlight ? 'text-primary' : 'text-text-dark'}`}>
+                  {detail.value}
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

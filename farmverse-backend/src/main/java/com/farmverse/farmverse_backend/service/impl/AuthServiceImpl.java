@@ -53,12 +53,21 @@ public class AuthServiceImpl implements AuthService {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+        boolean matches = passwordEncoder.matches(request.getPassword(), user.getPassword())
+                || request.getPassword().equals(user.getPassword());
+
+        if (!matches) {
             throw new RuntimeException("Invalid Password");
+        }
+
+        // Auto-upgrade plain text password to BCrypt hash in DB on login
+        if (request.getPassword().equals(user.getPassword())) {
+            user.setPassword(passwordEncoder.encode(request.getPassword()));
+            userRepository.save(user);
         }
 
         String token = jwtService.generateToken(user.getEmail());
 
         return new LoginResponse(token, "Login Successful", user.getFullName(), user.getRole());
     }
-}
+}

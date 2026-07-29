@@ -50,8 +50,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         try {
             email = jwtService.extractUsername(jwt);
-            System.out.println("Authorization Header: " + authHeader);
-            System.out.println("Extracted Email: " + email);
 
             if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
@@ -73,7 +71,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 }
             }
         } catch (Exception e) {
-            System.out.println("JWT validation failed: " + e.getMessage());
+            System.out.println("JWT authentication filter error: " + e.getMessage());
         }
 
         filterChain.doFilter(request, response);

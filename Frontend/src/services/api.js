@@ -24,13 +24,17 @@ api.interceptors.request.use(
   }
 );
 
-// Response interceptor - handles token expiration
+// Response interceptor - handles token expiration and forbidden responses
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
+    const status = error.response?.status;
+    const onLoginPage = window.location.pathname === '/login';
+    if ((status === 401 || status === 403) && !onLoginPage) {
       localStorage.removeItem('token');
       localStorage.removeItem('user');
+      localStorage.removeItem('fullName');
+      localStorage.removeItem('role');
       window.location.href = '/login';
     }
     return Promise.reject(error);
