@@ -11,7 +11,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/fertilizers")
-@CrossOrigin(origins = "*")
 public class FertilizerController {
 
     @Autowired

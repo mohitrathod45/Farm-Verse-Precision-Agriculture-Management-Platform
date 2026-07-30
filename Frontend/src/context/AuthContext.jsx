@@ -20,7 +20,7 @@ export const AuthProvider = ({ children }) => {
     const storedUser = localStorage.getItem('user');
     const storedToken = localStorage.getItem('token');
     
-    if (storedUser && storedToken) {
+    if (storedUser && storedToken && storedToken !== 'undefined' && storedToken !== 'null') {
       try {
         setUser(JSON.parse(storedUser));
       } catch {
@@ -35,8 +35,12 @@ export const AuthProvider = ({ children }) => {
     try {
       const response = await api.post('/auth/login', { email, password });
       
-      const { token, fullName, role } = response.data;
+      const { token, fullName, role } = response.data || {};
       
+      if (!token) {
+        throw new Error('No authentication token received from server');
+      }
+
       const userObj = {
         fullName: fullName || 'Farmer',
         email: email,
@@ -52,7 +56,7 @@ export const AuthProvider = ({ children }) => {
       toast.success(`Welcome back, ${userObj.fullName}!`);
       return { success: true, user: userObj };
     } catch (error) {
-      const message = error.response?.data?.message || 'Login failed. Please check your credentials.';
+      const message = error.response?.data?.message || error.message || 'Login failed. Please check your credentials.';
       toast.error(message);
       return { success: false, message };
     }

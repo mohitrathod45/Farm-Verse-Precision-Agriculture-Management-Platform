@@ -11,7 +11,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/irrigation")
-@CrossOrigin(origins = "*")
 public class IrrigationController {
 
     @Autowired

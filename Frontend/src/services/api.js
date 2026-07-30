@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:8080/api';
+// Use relative '/api' path to leverage Vite dev server proxy
+const API_BASE_URL = '/api';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -9,12 +10,17 @@ const api = axios.create({
   },
 });
 
-// Attach JWT token to every outgoing request
+// Attach JWT token to every outgoing request only if valid token exists
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+    if (token && token !== 'undefined' && token !== 'null' && token.trim().length > 10) {
+      const bearer = `Bearer ${token.trim()}`;
+      if (config.headers && typeof config.headers.set === 'function') {
+        config.headers.set('Authorization', bearer);
+      }
+      config.headers.Authorization = bearer;
+      config.headers['Authorization'] = bearer;
     }
     return config;
   },
