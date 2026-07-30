@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
+import { useAuth } from "../../context/AuthContext";
 import {
   RiPlantLine,
   RiMailLine,
@@ -10,6 +10,7 @@ import {
 
 const Login = () => {
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const [formData, setFormData] = useState({
     email: "",
@@ -17,6 +18,7 @@ const Login = () => {
   });
 
   const [errors, setErrors] = useState({});
+  const [submitting, setSubmitting] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -51,37 +53,15 @@ const Login = () => {
     }
 
     try {
-      const response = await axios.post(
-        "http://localhost:8080/api/auth/login",
-        {
-          email: formData.email,
-          password: formData.password,
-        }
-      );
-
-      const data = response.data;
-
-      // ── Store token ──────────────────────────────────────────────
-      localStorage.setItem("token", data.token);
-
-      // ── Build a user object that AuthContext.isAuthenticated needs ─
-      const userObj = {
-        fullName: data.fullName,
-        email:    formData.email,
-        role:     data.role,
-      };
-      localStorage.setItem("user",     JSON.stringify(userObj));
-      localStorage.setItem("fullName", data.fullName);
-      localStorage.setItem("role",     data.role);
-
-      navigate("/dashboard");
-    } catch (error) {
-      if (error.response) {
-        alert(error.response.data.message || "Invalid Email or Password");
-      } else {
-        alert("Unable to connect to server");
+      setSubmitting(true);
+      const res = await login(formData.email, formData.password);
+      if (res.success) {
+        navigate("/dashboard");
       }
+    } catch (error) {
       console.error(error);
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -176,9 +156,10 @@ const Login = () => {
 
             <button
               type="submit"
-              className="w-full bg-green-600 text-white py-3 rounded-lg font-bold hover:bg-green-700"
+              disabled={submitting}
+              className="w-full bg-green-600 text-white py-3 rounded-lg font-bold hover:bg-green-700 disabled:opacity-50 cursor-pointer"
             >
-              Login
+              {submitting ? "Signing in..." : "Login"}
             </button>
 
           </form>

@@ -21,7 +21,11 @@ export const AuthProvider = ({ children }) => {
     const storedToken = localStorage.getItem('token');
     
     if (storedUser && storedToken) {
-      setUser(JSON.parse(storedUser));
+      try {
+        setUser(JSON.parse(storedUser));
+      } catch {
+        setUser(null);
+      }
     }
     setLoading(false);
   }, []);
@@ -31,14 +35,22 @@ export const AuthProvider = ({ children }) => {
     try {
       const response = await api.post('/auth/login', { email, password });
       
-      const { token, user } = response.data;
+      const { token, fullName, role } = response.data;
       
+      const userObj = {
+        fullName: fullName || 'Farmer',
+        email: email,
+        role: role || 'Farmer'
+      };
+
       localStorage.setItem('token', token);
-      localStorage.setItem('user', JSON.stringify(user));
+      localStorage.setItem('user', JSON.stringify(userObj));
+      localStorage.setItem('fullName', userObj.fullName);
+      localStorage.setItem('role', userObj.role);
       
-      setUser(user);
-      toast.success(`Welcome back, ${user.fullName}!`);
-      return { success: true, user };
+      setUser(userObj);
+      toast.success(`Welcome back, ${userObj.fullName}!`);
+      return { success: true, user: userObj };
     } catch (error) {
       const message = error.response?.data?.message || 'Login failed. Please check your credentials.';
       toast.error(message);
@@ -64,6 +76,8 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
+    localStorage.removeItem('fullName');
+    localStorage.removeItem('role');
     setUser(null);
     toast.success('Logged out successfully');
   };

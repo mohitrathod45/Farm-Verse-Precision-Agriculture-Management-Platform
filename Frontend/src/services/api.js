@@ -21,8 +21,7 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Only redirect on 401 (token truly missing/expired)
-// 403 is ignored — it's noise from unauthenticated prefetches
+// Response interceptor — clear stale token on 401 Unauthorized
 api.interceptors.response.use(
   (response) => response,
   (error) => {
