@@ -59,12 +59,20 @@ const Login = () => {
         }
       );
 
-      // Save JWT Token and user info
-      localStorage.setItem("token", response.data.token);
-      localStorage.setItem("fullName", response.data.fullName);
-      localStorage.setItem("role", response.data.role);
+      const data = response.data;
 
-      alert(response.data.message);
+      // ── Store token ──────────────────────────────────────────────
+      localStorage.setItem("token", data.token);
+
+      // ── Build a user object that AuthContext.isAuthenticated needs ─
+      const userObj = {
+        fullName: data.fullName,
+        email:    formData.email,
+        role:     data.role,
+      };
+      localStorage.setItem("user",     JSON.stringify(userObj));
+      localStorage.setItem("fullName", data.fullName);
+      localStorage.setItem("role",     data.role);
 
       navigate("/dashboard");
     } catch (error) {
@@ -73,7 +81,6 @@ const Login = () => {
       } else {
         alert("Unable to connect to server");
       }
-
       console.error(error);
     }
   };

@@ -84,7 +84,12 @@ public class SecurityConfig {
 
         CorsConfiguration configuration = new CorsConfiguration();
 
-        configuration.setAllowedOrigins(List.of("http://localhost:5173"));
+        // Allow both Vite dev server ports (5173 primary, 5174 fallback)
+        configuration.setAllowedOrigins(List.of(
+                "http://localhost:5173",
+                "http://localhost:5174",
+                "http://localhost:5175"
+        ));
 
         configuration.setAllowedMethods(List.of(
                 "GET",

@@ -1,6 +1,5 @@
 import axios from 'axios';
 
-// Your Spring Boot backend URL
 const API_BASE_URL = 'http://localhost:8080/api';
 
 const api = axios.create({
@@ -10,7 +9,7 @@ const api = axios.create({
   },
 });
 
-// Request interceptor - adds token to every request
+// Attach JWT token to every outgoing request
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
@@ -19,23 +18,23 @@ api.interceptors.request.use(
     }
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
-// Response interceptor - handles token expiration and forbidden responses
+// Only redirect on 401 (token truly missing/expired)
+// 403 is ignored — it's noise from unauthenticated prefetches
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    const status = error.response?.status;
-    const onLoginPage = window.location.pathname === '/login';
-    if ((status === 401 || status === 403) && !onLoginPage) {
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      localStorage.removeItem('fullName');
-      localStorage.removeItem('role');
-      window.location.href = '/login';
+    if (error.response?.status === 401) {
+      const path = window.location.pathname;
+      if (path !== '/login' && path !== '/register' && path !== '/') {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        localStorage.removeItem('fullName');
+        localStorage.removeItem('role');
+        window.location.href = '/login';
+      }
     }
     return Promise.reject(error);
   }

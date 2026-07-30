@@ -3,17 +3,17 @@ import { useLocation } from 'react-router-dom';
 import api from '../services/api';
 import { generateNotificationsFromData } from '../utils/notificationGenerator';
 
-const NotificationContext = createContext();
+const NotificationContext = createContext(null);
 
-export const useNotifications = () => {
+export function useNotifications() {
   const context = useContext(NotificationContext);
   if (!context) {
     throw new Error('useNotifications must be used within NotificationProvider');
   }
   return context;
-};
+}
 
-export const NotificationProvider = ({ children }) => {
+export function NotificationProvider({ children }) {
   const location = useLocation();
 
   const [notifications, setNotifications] = useState([]);
@@ -26,13 +26,14 @@ export const NotificationProvider = ({ children }) => {
     }
   });
   const [cleared, setCleared] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const fetchNotifications = useCallback(async () => {
-    // Only fetch when a valid token exists
+    // ONLY fetch when a valid token exists in localStorage
     const token = localStorage.getItem('token');
     if (!token) {
       setLoading(false);
+      setNotifications([]);
       return;
     }
 
@@ -47,28 +48,24 @@ export const NotificationProvider = ({ children }) => {
       ]);
 
       const raw = generateNotificationsFromData({
-        farms:       farmRes.data || [],
-        crops:       cropRes.data || [],
-        irrigations: irrRes.data || [],
-        fertilizers: fertRes.data || [],
-        reports:     repRes.data || [],
+        farms:       Array.isArray(farmRes.data) ? farmRes.data : [],
+        crops:       Array.isArray(cropRes.data) ? cropRes.data : [],
+        irrigations: Array.isArray(irrRes.data)  ? irrRes.data  : [],
+        fertilizers: Array.isArray(fertRes.data) ? fertRes.data : [],
+        reports:     Array.isArray(repRes.data)  ? repRes.data  : [],
       });
 
-      // Apply read state
-      const processed = raw.map(n => ({
-        ...n,
-        read: readIds.includes(n.id),
-      }));
-
-      setNotifications(processed);
+      setNotifications(
+        raw.map(n => ({ ...n, read: readIds.includes(n.id) }))
+      );
     } catch (error) {
-      console.error('Error fetching notifications:', error);
+      console.error('Notification fetch error:', error);
     } finally {
       setLoading(false);
     }
   }, [readIds]);
 
-  // Re-fetch whenever the route changes (catches post-login navigation)
+  // Re-fetch on route change — token check inside fetchNotifications guards it
   useEffect(() => {
     fetchNotifications();
   }, [fetchNotifications, location.pathname]);
@@ -82,9 +79,9 @@ export const NotificationProvider = ({ children }) => {
 
   const markAsRead = (id) => {
     if (!readIds.includes(id)) {
-      const nextRead = [...readIds, id];
-      setReadIds(nextRead);
-      localStorage.setItem('read_notification_ids', JSON.stringify(nextRead));
+      const next = [...readIds, id];
+      setReadIds(next);
+      localStorage.setItem('read_notification_ids', JSON.stringify(next));
       setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: true } : n));
     }
   };
@@ -109,4 +106,4 @@ export const NotificationProvider = ({ children }) => {
       {children}
     </NotificationContext.Provider>
   );
-};
+}
