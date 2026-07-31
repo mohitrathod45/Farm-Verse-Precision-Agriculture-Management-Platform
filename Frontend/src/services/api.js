@@ -1,7 +1,6 @@
 import axios from 'axios';
 
-// Use relative '/api' path to leverage Vite dev server proxy
-const API_BASE_URL = '/api';
+const API_BASE_URL = 'http://localhost:8080/api';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -15,7 +14,8 @@ api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
     if (token && token !== 'undefined' && token !== 'null' && token.trim().length > 10) {
-      const bearer = `Bearer ${token.trim()}`;
+      const cleanToken = token.trim();
+      const bearer = `Bearer ${cleanToken}`;
       if (config.headers && typeof config.headers.set === 'function') {
         config.headers.set('Authorization', bearer);
       }
@@ -27,7 +27,7 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Response interceptor — clear stale token on 401 Unauthorized
+// Response interceptor — handle 401 Unauthorized gracefully
 api.interceptors.response.use(
   (response) => response,
   (error) => {

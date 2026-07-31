@@ -16,24 +16,22 @@ public class CustomUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String email)
             throws UsernameNotFoundException {
 
-        System.out.println("[USERDETAILS-SERVICE DEBUG] Loading user by email: " + email);
+        if (email == null || email.isBlank()) {
+            throw new UsernameNotFoundException("Email cannot be empty");
+        }
 
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> {
-                    System.out.println("[USERDETAILS-SERVICE DEBUG FAIL] User NOT FOUND in database for email: " + email);
-                    return new UsernameNotFoundException("User not found: " + email);
-                });
+        String cleanEmail = email.trim();
 
-        String roleName = (user.getRole() != null && !user.getRole().isBlank()) ? user.getRole() : "Farmer";
+        User user = userRepository.findByEmail(cleanEmail)
+                .orElseGet(() -> userRepository.findByEmail(cleanEmail.toLowerCase())
+                        .orElseThrow(() -> new UsernameNotFoundException("User not found: " + cleanEmail)));
 
-        UserDetails userDetails = org.springframework.security.core.userdetails.User
+        String roleName = (user.getRole() != null && !user.getRole().isBlank()) ? user.getRole().trim() : "Farmer";
+
+        return org.springframework.security.core.userdetails.User
                 .withUsername(user.getEmail())
                 .password(user.getPassword())
                 .roles(roleName)
                 .build();
-
-        System.out.println("[USERDETAILS-SERVICE DEBUG SUCCESS] Loaded UserDetails -> Username: " + userDetails.getUsername() + " | Authorities: " + userDetails.getAuthorities());
-
-        return userDetails;
     }
 }
