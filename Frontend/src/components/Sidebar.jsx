@@ -11,9 +11,12 @@ import {
   RiLeafLine,
   RiCloseLine,
   RiQuestionLine,
+  RiGroupLine,
+  RiShieldUserLine,
 } from 'react-icons/ri';
+import { useAuth } from '../context/AuthContext';
 
-const navItems = [
+const farmerNavItems = [
   { name: 'Dashboard', icon: RiDashboardLine, path: '/dashboard' },
   { name: 'My Farms', icon: RiMap2Line, path: '/farms' },
   { name: 'Crop Management', icon: RiPlantLine, path: '/crops' },
@@ -23,9 +26,24 @@ const navItems = [
   { name: 'Profile', icon: RiUserLine, path: '/profile' },
 ];
 
+const adminNavItems = [
+  { name: 'Admin Dashboard', icon: RiDashboardLine, path: '/admin/dashboard' },
+  { name: 'User Management', icon: RiGroupLine, path: '/admin/users' },
+  { name: 'All Farms', icon: RiMap2Line, path: '/admin/farms' },
+  { name: 'Crop Management', icon: RiPlantLine, path: '/admin/crops' },
+  { name: 'Irrigation', icon: RiDropLine, path: '/admin/irrigation' },
+  { name: 'Fertilizer', icon: RiFlaskLine, path: '/admin/fertilizers' },
+  { name: 'Reports', icon: RiBarChart2Line, path: '/admin/reports' },
+  { name: 'Profile', icon: RiUserLine, path: '/profile' },
+];
+
 const Sidebar = ({ isOpen, setIsOpen }) => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { user, logout } = useAuth();
+
+  const isAdmin = user?.role === 'Admin';
+  const navItems = isAdmin ? adminNavItems : farmerNavItems;
 
   const isActive = (path) => location.pathname === path;
 
@@ -47,13 +65,24 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
       >
         {/* Logo */}
         <div className="h-20 flex items-center justify-between px-6 border-b border-border-light shrink-0">
-          <Link to="/dashboard" className="flex items-center space-x-2.5 group focus:outline-none" onClick={() => setIsOpen(false)}>
+          <Link
+            to={isAdmin ? "/admin/dashboard" : "/dashboard"}
+            className="flex items-center space-x-2.5 group focus:outline-none"
+            onClick={() => setIsOpen(false)}
+          >
             <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center shadow-sm">
               <RiLeafLine className="text-white text-lg" />
             </div>
-            <span className="text-xl font-bold tracking-tight text-text-dark font-display">
-              Farm<span className="text-primary">Verse</span>
-            </span>
+            <div className="flex flex-col">
+              <span className="text-xl font-bold tracking-tight text-text-dark font-display leading-none">
+                Farm<span className="text-primary">Verse</span>
+              </span>
+              {isAdmin && (
+                <span className="text-[10px] font-extrabold uppercase tracking-widest text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded mt-1 border border-emerald-200/60 w-fit">
+                  Admin Portal
+                </span>
+              )}
+            </div>
           </Link>
           <button className="md:hidden text-text-muted hover:text-text-dark transition-colors" onClick={() => setIsOpen(false)}>
             <RiCloseLine className="text-2xl" />
@@ -62,7 +91,9 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
 
         {/* Nav Links */}
         <nav className="flex-1 overflow-y-auto py-5 px-3 space-y-1">
-          <p className="text-[10px] font-bold uppercase tracking-widest text-text-muted px-3 mb-3">Main Menu</p>
+          <p className="text-[10px] font-bold uppercase tracking-widest text-text-muted px-3 mb-3">
+            {isAdmin ? 'System Administration' : 'Main Menu'}
+          </p>
           {navItems.map((item) => {
             const Icon = item.icon;
             const active = isActive(item.path);
@@ -86,18 +117,25 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
 
         {/* Bottom actions */}
         <div className="border-t border-border-light p-3 space-y-1 shrink-0">
-          <Link
-            to="/help"
-            onClick={() => setIsOpen(false)}
-            className={`flex items-center space-x-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 ${
-              isActive('/help') ? 'bg-primary text-white' : 'text-text-muted hover:bg-bg-light hover:text-text-dark'
-            }`}
-          >
-            <RiQuestionLine className="text-lg shrink-0" />
-            <span>Help & Support</span>
-          </Link>
+          {!isAdmin && (
+            <Link
+              to="/help"
+              onClick={() => setIsOpen(false)}
+              className={`flex items-center space-x-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 ${
+                isActive('/help') ? 'bg-primary text-white' : 'text-text-muted hover:bg-bg-light hover:text-text-dark'
+              }`}
+            >
+              <RiQuestionLine className="text-lg shrink-0" />
+              <span>Help & Support</span>
+            </Link>
+          )}
+
           <button
-            onClick={() => { setIsOpen(false); navigate('/login'); }}
+            onClick={() => {
+              setIsOpen(false);
+              logout();
+              navigate('/login');
+            }}
             className="w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-text-muted hover:bg-red-50 hover:text-red-500 transition-all duration-200"
           >
             <RiLogoutBoxRLine className="text-lg shrink-0" />

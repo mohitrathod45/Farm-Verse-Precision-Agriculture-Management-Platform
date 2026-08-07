@@ -4,6 +4,7 @@ import toast from 'react-hot-toast';
 import api from '../../services/api';
 import ConfirmModal from '../../components/ConfirmModal';
 import { formatDate } from '../../utils/dateUtils';
+import { getIrrigationImage, DEFAULT_IRRIGATION_IMAGE } from '../../utils/irrigationImageMapper';
 
 const typeColorMap = {
   'Drip Irrigation':   'bg-blue-100 text-blue-700',
@@ -268,52 +269,69 @@ const Irrigation = () => {
         </div>
       ) : (
         <>
-          {/* Cards Grid */}
+          {/* Cards Grid with Hero Images */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-8">
             {filtered.map(item => (
-              <div key={item.irrigationId} className="bg-white rounded-2xl p-5 shadow-sm border border-border-light hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
-                <div className="flex items-start justify-between mb-3">
-                  <div className="w-10 h-10 rounded-xl bg-sky/10 text-sky flex items-center justify-center">
-                    <RiDropLine className="text-xl" />
+              <div
+                key={item.irrigationId}
+                className="bg-white rounded-2xl shadow-sm border border-border-light hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 overflow-hidden flex flex-col group"
+              >
+                {/* Hero Image Section */}
+                <div className="relative h-44 w-full overflow-hidden bg-bg-light">
+                  <img
+                    src={getIrrigationImage(item.irrigationType)}
+                    alt={item.irrigationType || 'Irrigation'}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = DEFAULT_IRRIGATION_IMAGE;
+                    }}
+                  />
+                  <div className="absolute top-3 right-3">
+                    <span className={`text-xs font-bold px-2.5 py-1 rounded-full shadow-sm backdrop-blur-md bg-white/90 ${getTypeColor(item.irrigationType)}`}>
+                      {item.irrigationType || 'N/A'}
+                    </span>
                   </div>
-                  <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${getTypeColor(item.irrigationType)}`}>
-                    {item.irrigationType || 'N/A'}
-                  </span>
                 </div>
 
-                <h3 className="text-base font-bold text-text-dark">{getFarmName(item.farmId)}</h3>
-                <p className="text-xs text-text-muted mt-0.5 mb-3">
-                  {formatDate(item.scheduleDate)}
-                </p>
+                {/* Card Content Area */}
+                <div className="p-5 flex-1 flex flex-col justify-between">
+                  <div>
+                    <h3 className="text-base font-bold text-text-dark">{getFarmName(item.farmId)}</h3>
+                    <p className="text-xs text-text-muted mt-0.5 mb-3">
+                      {formatDate(item.scheduleDate)}
+                    </p>
 
-                <div className="flex items-center justify-between text-xs text-text-muted mb-4">
-                  <span className="flex items-center space-x-1">
-                    <RiDropLine className="text-sky" />
-                    <span>{item.waterQuantity ? `${item.waterQuantity} Litres` : '—'}</span>
-                  </span>
-                  <span className="flex items-center space-x-1">
-                    <RiCalendarCheckLine className="text-primary" />
-                    <span>{formatDate(item.scheduleDate)}</span>
-                  </span>
-                </div>
+                    <div className="flex items-center justify-between text-xs text-text-muted mb-4">
+                      <span className="flex items-center space-x-1">
+                        <RiDropLine className="text-sky" />
+                        <span>{item.waterQuantity ? `${item.waterQuantity} Litres` : '—'}</span>
+                      </span>
+                      <span className="flex items-center space-x-1">
+                        <RiCalendarCheckLine className="text-primary" />
+                        <span>{formatDate(item.scheduleDate)}</span>
+                      </span>
+                    </div>
 
-                {item.remarks && (
-                  <p className="text-xs text-text-muted italic mb-3 truncate">"{item.remarks}"</p>
-                )}
+                    {item.remarks && (
+                      <p className="text-xs text-text-muted italic mb-3 truncate">&ldquo;{item.remarks}&rdquo;</p>
+                    )}
+                  </div>
 
-                <div className="flex items-center justify-end space-x-2 border-t border-border-light pt-3">
-                  <button
-                    onClick={() => openEditModal(item)}
-                    className="flex items-center space-x-1 text-xs font-semibold text-primary hover:bg-primary/10 px-2.5 py-1.5 rounded-lg transition-colors cursor-pointer"
-                  >
-                    <RiEditLine /> <span>Edit</span>
-                  </button>
-                  <button
-                    onClick={() => openDeleteModal(item.irrigationId)}
-                    className="flex items-center space-x-1 text-xs font-semibold text-red-500 hover:bg-red-50 px-2.5 py-1.5 rounded-lg transition-colors cursor-pointer"
-                  >
-                    <RiDeleteBinLine /> <span>Delete</span>
-                  </button>
+                  <div className="flex items-center justify-end space-x-2 border-t border-border-light pt-3">
+                    <button
+                      onClick={() => openEditModal(item)}
+                      className="flex items-center space-x-1 text-xs font-semibold text-primary hover:bg-primary/10 px-2.5 py-1.5 rounded-lg transition-colors cursor-pointer"
+                    >
+                      <RiEditLine /> <span>Edit</span>
+                    </button>
+                    <button
+                      onClick={() => openDeleteModal(item.irrigationId)}
+                      className="flex items-center space-x-1 text-xs font-semibold text-red-500 hover:bg-red-50 px-2.5 py-1.5 rounded-lg transition-colors cursor-pointer"
+                    >
+                      <RiDeleteBinLine /> <span>Delete</span>
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}
@@ -337,7 +355,18 @@ const Irrigation = () => {
                 <tbody className="divide-y divide-border-light">
                   {filtered.map(item => (
                     <tr key={item.irrigationId} className="hover:bg-bg-light/60 transition-colors">
-                      <td className="py-3.5 px-4 text-sm font-bold text-text-dark">{getFarmName(item.farmId)}</td>
+                      <td className="py-3.5 px-4 text-sm font-bold text-text-dark flex items-center space-x-3">
+                        <img
+                          src={getIrrigationImage(item.irrigationType)}
+                          alt={item.irrigationType}
+                          className="w-8 h-8 rounded-lg object-cover border border-border-light"
+                          onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = DEFAULT_IRRIGATION_IMAGE;
+                          }}
+                        />
+                        <span>{getFarmName(item.farmId)}</span>
+                      </td>
                       <td className="py-3.5 px-4 text-sm text-text-muted">{item.irrigationType || '—'}</td>
                       <td className="py-3.5 px-4 text-sm text-text-muted">{formatDate(item.scheduleDate)}</td>
                       <td className="py-3.5 px-4 text-sm font-bold text-sky">{item.waterQuantity ? `${item.waterQuantity} Litres` : '—'}</td>

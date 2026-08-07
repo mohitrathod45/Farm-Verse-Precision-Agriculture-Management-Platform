@@ -7,6 +7,7 @@ import com.farmverse.farmverse_backend.entity.User;
 import com.farmverse.farmverse_backend.repository.UserRepository;
 import com.farmverse.farmverse_backend.security.JwtService;
 import com.farmverse.farmverse_backend.service.AuthService;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -23,18 +24,42 @@ public class AuthServiceImpl implements AuthService {
     @Autowired
     private JwtService jwtService;
 
+    @PostConstruct
+    public void initAdminUser() {
+        try {
+            String adminEmail = "admin@farmverse.com";
+            if (!userRepository.existsByEmail(adminEmail)) {
+                User admin = new User();
+                admin.setFullName("System Admin");
+                admin.setEmail(adminEmail);
+                admin.setPassword(passwordEncoder.encode("admin123"));
+                admin.setPhone("9999999999");
+                admin.setRole("Admin");
+                userRepository.save(admin);
+                System.out.println("[DB SEED] Created default Admin account: admin@farmverse.com / admin123");
+            }
+        } catch (Exception e) {
+            System.err.println("[DB SEED WARNING] Could not seed admin account: " + e.getMessage());
+        }
+    }
+
     @Override
     public String register(RegisterRequest request) {
+        if (request.getEmail() == null || request.getEmail().isBlank()) {
+            throw new RuntimeException("Email is required");
+        }
 
-        if (userRepository.existsByEmail(request.getEmail())) {
-            return "Email already exists!";
+        String cleanEmail = request.getEmail().trim().toLowerCase();
+
+        if (userRepository.existsByEmail(cleanEmail)) {
+            throw new RuntimeException("Email already registered! Please sign in or use another email.");
         }
 
         User user = new User();
-        user.setFullName(request.getFullName());
-        user.setEmail(request.getEmail());
+        user.setFullName(request.getFullName() != null ? request.getFullName().trim() : "");
+        user.setEmail(cleanEmail);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setPhone(request.getPhone());
+        user.setPhone(request.getPhone() != null ? request.getPhone().trim() : "");
 
         if (request.getRole() == null || request.getRole().isBlank()) {
             user.setRole("Farmer");
@@ -49,9 +74,14 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public LoginResponse login(LoginRequest request) {
+        if (request.getEmail() == null || request.getEmail().isBlank()) {
+            throw new RuntimeException("Email is required");
+        }
 
-        User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        String cleanEmail = request.getEmail().trim().toLowerCase();
+
+        User user = userRepository.findByEmail(cleanEmail)
+                .orElseThrow(() -> new RuntimeException("User not found with email: " + cleanEmail));
 
         boolean matches = passwordEncoder.matches(request.getPassword(), user.getPassword())
                 || request.getPassword().equals(user.getPassword());
@@ -70,4 +100,4 @@ public class AuthServiceImpl implements AuthService {
 
         return new LoginResponse(token, "Login Successful", user.getFullName(), user.getRole());
     }
-}
+}

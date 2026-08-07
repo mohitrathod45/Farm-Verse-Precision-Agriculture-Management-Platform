@@ -30,10 +30,24 @@ export const AuthProvider = ({ children }) => {
     setLoading(false);
   }, []);
 
+  // Helper to extract clean error message
+  const extractErrorMessage = (error, defaultMsg) => {
+    if (error.response?.data) {
+      if (typeof error.response.data === 'string') {
+        return error.response.data;
+      }
+      if (error.response.data.message) {
+        return error.response.data.message;
+      }
+    }
+    return error.message || defaultMsg;
+  };
+
   // Login function
   const login = async (email, password) => {
     try {
-      const response = await api.post('/auth/login', { email, password });
+      const cleanEmail = email ? email.trim().toLowerCase() : '';
+      const response = await api.post('/auth/login', { email: cleanEmail, password });
       
       const { token, fullName, role } = response.data || {};
       
@@ -43,7 +57,7 @@ export const AuthProvider = ({ children }) => {
 
       const userObj = {
         fullName: fullName || 'Farmer',
-        email: email,
+        email: cleanEmail,
         role: role || 'Farmer'
       };
 
@@ -56,7 +70,7 @@ export const AuthProvider = ({ children }) => {
       toast.success(`Welcome back, ${userObj.fullName}!`);
       return { success: true, user: userObj };
     } catch (error) {
-      const message = error.response?.data?.message || error.message || 'Login failed. Please check your credentials.';
+      const message = extractErrorMessage(error, 'Login failed. Please check your credentials.');
       toast.error(message);
       return { success: false, message };
     }
@@ -65,12 +79,21 @@ export const AuthProvider = ({ children }) => {
   // Register function
   const register = async (userData) => {
     try {
-      const response = await api.post('/auth/register', userData);
+      const cleanUserData = {
+        ...userData,
+        email: userData.email ? userData.email.trim().toLowerCase() : ''
+      };
+
+      const response = await api.post('/auth/register', cleanUserData);
       
+      if (typeof response.data === 'string' && response.data.toLowerCase().includes('already exists')) {
+        throw new Error(response.data);
+      }
+
       toast.success('Registration successful! Please login.');
       return { success: true, data: response.data };
     } catch (error) {
-      const message = error.response?.data?.message || 'Registration failed. Please try again.';
+      const message = extractErrorMessage(error, 'Registration failed. Please try again.');
       toast.error(message);
       return { success: false, message };
     }

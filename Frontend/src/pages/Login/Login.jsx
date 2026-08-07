@@ -1,185 +1,201 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext";
-import {
-  RiPlantLine,
-  RiMailLine,
-  RiLockPasswordLine,
-  RiErrorWarningLine,
-} from "react-icons/ri";
+import { useState } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
+import { RiEyeLine, RiEyeOffLine, RiLeafLine, RiUser3Line, RiShieldUserLine } from 'react-icons/ri';
+import { useAuth } from '../../context/AuthContext';
+import toast from 'react-hot-toast';
+
+// Validation schema matching database fields
+const loginSchema = yup.object({
+  email: yup
+    .string()
+    .email('Please enter a valid email address')
+    .required('Email is required'),
+  password: yup
+    .string()
+    .min(6, 'Password must be at least 6 characters')
+    .required('Password is required'),
+}).required();
 
 const Login = () => {
+  const [selectedRole, setSelectedRole] = useState('Farmer'); // 'Farmer' or 'Admin'
+  const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const location = useLocation();
+  const { login, logout } = useAuth();
 
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
+  const from = location.state?.from?.pathname || '/dashboard';
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(loginSchema)
   });
 
-  const [errors, setErrors] = useState({});
-  const [submitting, setSubmitting] = useState(false);
+  const onSubmit = async (data) => {
+    setIsLoading(true);
+    const result = await login(data.email, data.password);
+    setIsLoading(false);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
+    if (result.success) {
+      const userRole = result.user?.role || 'Farmer';
 
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-
-    setErrors({
-      ...errors,
-      [name]: "",
-    });
-  };
-
-  const handleLogin = async (e) => {
-    e.preventDefault();
-
-    const newErrors = {};
-
-    if (!formData.email.trim()) {
-      newErrors.email = "Email Address is required";
-    }
-
-    if (!formData.password.trim()) {
-      newErrors.password = "Password is required";
-    }
-
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      return;
-    }
-
-    try {
-      setSubmitting(true);
-      const res = await login(formData.email, formData.password);
-      if (res.success) {
-        navigate("/dashboard");
+      // Role Mode Enforcement
+      if (selectedRole === 'Farmer' && userRole === 'Admin') {
+        logout();
+        toast.error('This account belongs to an Administrator. Please select Administrator login.');
+        return;
       }
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setSubmitting(false);
+
+      if (selectedRole === 'Admin' && userRole !== 'Admin') {
+        logout();
+        toast.error('This account belongs to a Farmer. Please select Farmer login.');
+        return;
+      }
+
+      // Success Navigation
+      if (userRole === 'Admin') {
+        navigate('/admin/dashboard', { replace: true });
+      } else {
+        navigate(from, { replace: true });
+      }
     }
   };
 
   return (
-    <div className="min-h-screen bg-bg-light flex flex-col font-sans text-text-dark">
-      <div className="w-full p-6 sm:p-8 flex justify-center sm:justify-start">
-        <Link to="/" className="flex items-center space-x-2">
-          <RiPlantLine className="text-3xl text-primary" />
-          <span className="text-2xl font-bold tracking-tight text-text-dark">
-            Farm<span className="text-primary font-extrabold">Verse</span>
-          </span>
-        </Link>
-      </div>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-bg-light to-white py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-3xl shadow-xl border border-gray-100">
+        {/* Logo */}
+        <div className="text-center">
+          <Link to="/" className="inline-flex items-center space-x-2">
+            <div className="flex items-center justify-center w-12 h-12 rounded-2xl bg-primary/10 text-primary">
+              <RiLeafLine className="text-3xl" />
+            </div>
+            <span className="text-2xl font-bold text-text-dark font-display">
+              Farm<span className="text-primary font-extrabold">Verse</span>
+            </span>
+          </Link>
+          <h2 className="mt-6 text-3xl font-extrabold text-text-dark font-display">
+            Welcome Back
+          </h2>
+          <p className="mt-2 text-sm text-text-dark/70">
+            Sign in to manage your digital farm.
+          </p>
+        </div>
 
-      <div className="flex-grow flex items-center justify-center px-4 py-12">
-        <div className="bg-white rounded-[2rem] shadow-lg border border-gray-100 w-full max-w-md p-8 sm:p-10">
-          <div className="text-center mb-8">
-            <h2 className="text-3xl font-extrabold">
-              Welcome Back
-            </h2>
-
-            <p className="text-sm text-gray-500">
-              Sign in to manage your digital farm.
-            </p>
-          </div>
-
-          <form onSubmit={handleLogin} className="space-y-5">
-
-            {/* Email */}
-
+        {/* Login Form */}
+        <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
+          <div className="space-y-4">
+            {/* Role Selector Chips */}
             <div>
+              <label className="block text-xs font-bold text-text-dark/70 uppercase tracking-wider mb-2">
+                Login As
+              </label>
+              <div className="grid grid-cols-2 gap-2.5 p-1 bg-bg-light/80 rounded-2xl border border-gray-200/80">
+                <button
+                  type="button"
+                  onClick={() => setSelectedRole('Farmer')}
+                  className={`flex items-center justify-center space-x-2 py-2.5 px-3 rounded-xl text-xs font-bold transition-all duration-300 cursor-pointer ${
+                    selectedRole === 'Farmer'
+                      ? 'bg-primary text-white shadow-md shadow-primary/25 scale-[1.02]'
+                      : 'text-text-dark/70 hover:text-primary hover:bg-white/60'
+                  }`}
+                >
+                  <span className="text-sm">👨‍🌾</span>
+                  <span>Farmer</span>
+                </button>
 
-              <label className="block text-sm font-semibold mb-2">
+                <button
+                  type="button"
+                  onClick={() => setSelectedRole('Admin')}
+                  className={`flex items-center justify-center space-x-2 py-2.5 px-3 rounded-xl text-xs font-bold transition-all duration-300 cursor-pointer ${
+                    selectedRole === 'Admin'
+                      ? 'bg-primary text-white shadow-md shadow-primary/25 scale-[1.02]'
+                      : 'text-text-dark/70 hover:text-primary hover:bg-white/60'
+                  }`}
+                >
+                  <span className="text-sm">👨‍💼</span>
+                  <span>Administrator</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Email Field */}
+            <div>
+              <label htmlFor="email" className="block text-sm font-semibold text-text-dark mb-1.5">
                 Email Address
               </label>
-
-              <div className="relative">
-
-                <RiMailLine className="absolute left-3 top-4 text-gray-400" />
-
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  placeholder="Enter your email"
-                  className="w-full border rounded-lg pl-10 pr-4 py-3"
-                />
-
-              </div>
-
+              <input
+                id="email"
+                type="email"
+                {...register('email')}
+                className={`w-full px-4 py-3 rounded-xl border ${errors.email ? 'border-red-500' : 'border-gray-200'} focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all duration-200 bg-bg-light/50`}
+                placeholder={selectedRole === 'Admin' ? 'admin@farmverse.com' : 'farmer@example.com'}
+                autoComplete="email"
+              />
               {errors.email && (
-                <p className="text-red-500 text-sm mt-1 flex items-center">
-                  <RiErrorWarningLine className="mr-1" />
-                  {errors.email}
-                </p>
+                <p className="mt-1.5 text-sm text-red-500">{errors.email.message}</p>
               )}
-
             </div>
 
-            {/* Password */}
-
+            {/* Password Field */}
             <div>
-
-              <label className="block text-sm font-semibold mb-2">
+              <label htmlFor="password" className="block text-sm font-semibold text-text-dark mb-1.5">
                 Password
               </label>
-
               <div className="relative">
-
-                <RiLockPasswordLine className="absolute left-3 top-4 text-gray-400" />
-
                 <input
-                  type="password"
-                  name="password"
-                  value={formData.password}
-                  onChange={handleChange}
+                  id="password"
+                  type={showPassword ? 'text' : 'password'}
+                  {...register('password')}
+                  className={`w-full px-4 py-3 rounded-xl border ${errors.password ? 'border-red-500' : 'border-gray-200'} focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all duration-200 bg-bg-light/50 pr-12`}
                   placeholder="Enter your password"
-                  className="w-full border rounded-lg pl-10 pr-4 py-3"
+                  autoComplete="current-password"
                 />
-
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-text-dark/50 hover:text-primary transition-colors"
+                >
+                  {showPassword ? <RiEyeOffLine className="text-xl" /> : <RiEyeLine className="text-xl" />}
+                </button>
               </div>
-
               {errors.password && (
-                <p className="text-red-500 text-sm mt-1 flex items-center">
-                  <RiErrorWarningLine className="mr-1" />
-                  {errors.password}
-                </p>
+                <p className="mt-1.5 text-sm text-red-500">{errors.password.message}</p>
               )}
-
             </div>
-
-            <button
-              type="submit"
-              disabled={submitting}
-              className="w-full bg-green-600 text-white py-3 rounded-lg font-bold hover:bg-green-700 disabled:opacity-50 cursor-pointer"
-            >
-              {submitting ? "Signing in..." : "Login"}
-            </button>
-
-          </form>
-
-          <div className="text-center mt-6">
-
-            <p>
-              Don't have an account?{" "}
-
-              <Link
-                to="/register"
-                className="text-green-600 font-bold"
-              >
-                Register
-              </Link>
-
-            </p>
-
           </div>
-        </div>
+
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="w-full flex items-center justify-center px-4 py-3.5 text-sm font-semibold text-white bg-primary hover:bg-primary/90 rounded-xl shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer"
+          >
+            {isLoading ? (
+              <>
+                <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Signing in...
+              </>
+            ) : (
+              `Sign In as ${selectedRole === 'Admin' ? 'Administrator' : 'Farmer'}`
+            )}
+          </button>
+
+          <p className="text-center text-sm text-text-dark/70">
+            Don't have an account?{' '}
+            <Link to="/register" className="font-semibold text-primary hover:text-primary/80 transition-colors">
+              Create one now
+            </Link>
+          </p>
+        </form>
       </div>
     </div>
   );

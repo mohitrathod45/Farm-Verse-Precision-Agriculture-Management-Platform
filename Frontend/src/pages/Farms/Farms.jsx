@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
-import { RiAddLine, RiSearchLine, RiFilterLine, RiMapPin2Line, RiPlantLine, RiEditLine, RiDeleteBinLine, RiCloseLine } from 'react-icons/ri';
+import { RiAddLine, RiSearchLine, RiFilterLine, RiMapPin2Line, RiPlantLine, RiDeleteBinLine, RiCloseLine } from 'react-icons/ri';
 import toast from 'react-hot-toast';
 import api from '../../services/api';
 import ConfirmModal from '../../components/ConfirmModal';
+import { getFarmImage, DEFAULT_FARM_IMAGE } from '../../utils/farmImageMapper';
 
 const Farms = () => {
   const [farms, setFarms] = useState([]);
@@ -231,29 +232,50 @@ const Farms = () => {
           )}
         </div>
       ) : (
-        /* Farm Cards */
+        /* Farm Cards with Hero Images */
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-8">
           {filtered.map(farm => (
-            <div key={farm.farmId} className="bg-white rounded-2xl p-5 shadow-sm border border-border-light hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 group">
-              <div className="flex items-start justify-between mb-4">
-                <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
-                  <RiMapPin2Line className="text-xl" />
+            <div
+              key={farm.farmId}
+              className="bg-white rounded-2xl shadow-sm border border-border-light hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 overflow-hidden flex flex-col group"
+            >
+              {/* Hero Image Section */}
+              <div className="relative h-44 w-full overflow-hidden bg-bg-light">
+                <img
+                  src={getFarmImage(farm.farmName)}
+                  alt={farm.farmName}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = DEFAULT_FARM_IMAGE;
+                  }}
+                />
+                <div className="absolute top-3 right-3">
+                  <span className="text-xs font-bold px-2.5 py-1 rounded-full shadow-sm backdrop-blur-md bg-white/90 text-green-700">
+                    Active
+                  </span>
                 </div>
-                <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-green-100 text-green-700">Active</span>
               </div>
-              <h3 className="text-base font-bold text-text-dark mb-1">{farm.farmName}</h3>
-              <p className="text-xs text-text-muted mb-3">{farm.location} · {farm.area} Acres · {farm.soilType || 'Loamy Soil'}</p>
-              <div className="flex items-center space-x-2 mb-4">
-                <RiPlantLine className="text-secondary text-sm" />
-                <span className="text-xs font-semibold text-text-muted">Registered Farm</span>
-              </div>
-              <div className="flex items-center justify-end space-x-2 border-t border-border-light pt-3">
-                <button 
-                  onClick={() => openDeleteModal(farm.farmId)}
-                  className="flex items-center space-x-1 text-xs font-semibold text-red-500 hover:bg-red-50 px-2.5 py-1.5 rounded-lg transition-colors cursor-pointer"
-                >
-                  <RiDeleteBinLine /> <span>Delete</span>
-                </button>
+
+              {/* Card Content Area */}
+              <div className="p-5 flex-1 flex flex-col justify-between">
+                <div>
+                  <h3 className="text-base font-bold text-text-dark mb-1">{farm.farmName}</h3>
+                  <p className="text-xs text-text-muted mb-3">{farm.location} · {farm.area} Acres · {farm.soilType || 'Loamy Soil'}</p>
+                  <div className="flex items-center space-x-2 mb-4">
+                    <RiPlantLine className="text-secondary text-sm" />
+                    <span className="text-xs font-semibold text-text-muted">Registered Farm</span>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-end space-x-2 border-t border-border-light pt-3">
+                  <button 
+                    onClick={() => openDeleteModal(farm.farmId)}
+                    className="flex items-center space-x-1 text-xs font-semibold text-red-500 hover:bg-red-50 px-2.5 py-1.5 rounded-lg transition-colors cursor-pointer"
+                  >
+                    <RiDeleteBinLine /> <span>Delete</span>
+                  </button>
+                </div>
               </div>
             </div>
           ))}
@@ -278,7 +300,18 @@ const Farms = () => {
               <tbody className="divide-y divide-border-light">
                 {filtered.map(farm => (
                   <tr key={farm.farmId} className="hover:bg-bg-light/60 transition-colors">
-                    <td className="py-3.5 px-4 text-sm font-bold text-text-dark">{farm.farmName}</td>
+                    <td className="py-3.5 px-4 text-sm font-bold text-text-dark flex items-center space-x-3">
+                      <img
+                        src={getFarmImage(farm.farmName)}
+                        alt={farm.farmName}
+                        className="w-8 h-8 rounded-lg object-cover border border-border-light"
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = DEFAULT_FARM_IMAGE;
+                        }}
+                      />
+                      <span>{farm.farmName}</span>
+                    </td>
                     <td className="py-3.5 px-4 text-sm text-text-muted">{farm.location}</td>
                     <td className="py-3.5 px-4 text-sm text-text-muted">{farm.area} Acres</td>
                     <td className="py-3.5 px-4 text-sm text-text-muted">{farm.soilType || '—'}</td>

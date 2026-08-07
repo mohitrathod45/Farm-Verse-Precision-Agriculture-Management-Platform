@@ -4,6 +4,7 @@ import toast from 'react-hot-toast';
 import api from '../../services/api';
 import ConfirmModal from '../../components/ConfirmModal';
 import { formatDate } from '../../utils/dateUtils';
+import { getCropImage, DEFAULT_CROP_IMAGE } from '../../utils/cropImageMapper';
 
 const statusColorMap = {
   Growing:       'bg-green-100 text-green-700',
@@ -248,31 +249,56 @@ const Crops = () => {
           )}
         </div>
       ) : (
-        /* Crop Cards */
+        /* Crop Cards with Hero Images */
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-8">
           {filtered.map(crop => (
-            <div key={crop.cropId} className="bg-white rounded-2xl p-5 shadow-sm border border-border-light hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
-              <div className="flex items-start justify-between mb-3">
-                <div className="w-10 h-10 rounded-xl bg-secondary/10 text-secondary flex items-center justify-center">
-                  <RiPlantLine className="text-xl" />
+            <div
+              key={crop.cropId}
+              className="bg-white rounded-2xl shadow-sm border border-border-light hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 overflow-hidden flex flex-col"
+            >
+              {/* Hero Image Section */}
+              <div className="relative h-44 w-full overflow-hidden bg-bg-light group">
+                <img
+                  src={getCropImage(crop.cropName)}
+                  alt={crop.cropName}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = DEFAULT_CROP_IMAGE;
+                  }}
+                />
+                <div className="absolute top-3 right-3">
+                  <span className={`text-xs font-bold px-2.5 py-1 rounded-full shadow-sm backdrop-blur-md bg-white/90 ${getStatusColor(crop.status)}`}>
+                    {crop.status || 'Growing'}
+                  </span>
                 </div>
-                <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${getStatusColor(crop.status)}`}>
-                  {crop.status || 'Growing'}
-                </span>
               </div>
-              <h3 className="text-base font-bold text-text-dark">{crop.cropName}</h3>
-              <p className="text-xs text-text-muted mt-0.5 mb-3">{getFarmName(crop.farmId)}</p>
-              <div className="flex items-center space-x-3 text-xs text-text-muted mb-4">
-                <span className="flex items-center space-x-1"><RiSunLine className="text-accent" /><span>{crop.season || '—'}</span></span>
-                <span className="flex items-center space-x-1"><RiCalendarLine className="text-sky" /><span>{formatDate(crop.harvestingDate)}</span></span>
-              </div>
-              <div className="flex items-center justify-end border-t border-border-light pt-3">
-                <button
-                  onClick={() => openDeleteModal(crop.cropId)}
-                  className="flex items-center space-x-1 text-xs font-semibold text-red-500 hover:bg-red-50 px-2.5 py-1.5 rounded-lg transition-colors cursor-pointer"
-                >
-                  <RiDeleteBinLine /> <span>Delete</span>
-                </button>
+
+              {/* Card Content Area */}
+              <div className="p-5 flex-1 flex flex-col justify-between">
+                <div>
+                  <h3 className="text-base font-bold text-text-dark">{crop.cropName}</h3>
+                  <p className="text-xs text-text-muted mt-0.5 mb-3">{getFarmName(crop.farmId)}</p>
+                  <div className="flex items-center space-x-3 text-xs text-text-muted mb-4">
+                    <span className="flex items-center space-x-1">
+                      <RiSunLine className="text-accent" />
+                      <span>{crop.season || '—'}</span>
+                    </span>
+                    <span className="flex items-center space-x-1">
+                      <RiCalendarLine className="text-sky" />
+                      <span>{formatDate(crop.harvestingDate)}</span>
+                    </span>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-end border-t border-border-light pt-3">
+                  <button
+                    onClick={() => openDeleteModal(crop.cropId)}
+                    className="flex items-center space-x-1 text-xs font-semibold text-red-500 hover:bg-red-50 px-2.5 py-1.5 rounded-lg transition-colors cursor-pointer"
+                  >
+                    <RiDeleteBinLine /> <span>Delete</span>
+                  </button>
+                </div>
               </div>
             </div>
           ))}
@@ -298,7 +324,18 @@ const Crops = () => {
               <tbody className="divide-y divide-border-light">
                 {filtered.map(c => (
                   <tr key={c.cropId} className="hover:bg-bg-light/60 transition-colors">
-                    <td className="py-3.5 px-4 text-sm font-bold text-text-dark">{c.cropName}</td>
+                    <td className="py-3.5 px-4 text-sm font-bold text-text-dark flex items-center space-x-3">
+                      <img
+                        src={getCropImage(c.cropName)}
+                        alt={c.cropName}
+                        className="w-8 h-8 rounded-lg object-cover border border-border-light"
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = DEFAULT_CROP_IMAGE;
+                        }}
+                      />
+                      <span>{c.cropName}</span>
+                    </td>
                     <td className="py-3.5 px-4 text-sm text-text-muted">{getFarmName(c.farmId)}</td>
                     <td className="py-3.5 px-4 text-sm text-text-muted">{c.season || '—'}</td>
                     <td className="py-3.5 px-4 text-sm text-text-muted">{formatDate(c.sowingDate)}</td>
