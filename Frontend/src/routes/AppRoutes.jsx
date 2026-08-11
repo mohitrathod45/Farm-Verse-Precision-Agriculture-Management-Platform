@@ -26,6 +26,7 @@ import AdminCrops from '../pages/Admin/AdminCrops';
 import AdminIrrigation from '../pages/Admin/AdminIrrigation';
 import AdminFertilizers from '../pages/Admin/AdminFertilizers';
 import AdminReports from '../pages/Admin/AdminReports';
+import AiFarmingAssistant from '../pages/AiFarmingAssistant/AiFarmingAssistant';
 
 const AppRoutes = () => {
   return (
@@ -49,6 +50,7 @@ const AppRoutes = () => {
         <Route path="/irrigation" element={<Irrigation />} />
         <Route path="/fertilizer" element={<Fertilizer />} />
         <Route path="/reports" element={<Reports />} />
+        <Route path="/ai-assistant" element={<AiFarmingAssistant />} />
 
         {/* Admin Protected Routes */}
         <Route element={<AdminRoute />}>
