@@ -10,6 +10,7 @@ import Register from '../pages/Register/Register';
 import Dashboard from '../pages/Dashboard/Dashboard';
 import Farms from '../pages/Farms/Farms';
 import Crops from '../pages/Crops/Crops';
+import CropRecommendation from '../pages/CropRecommendation/CropRecommendation';
 import Irrigation from '../pages/Irrigation/Irrigation';
 import Fertilizer from '../pages/Fertilizer/Fertilizer';
 import Reports from '../pages/Reports/Reports';
@@ -30,6 +31,7 @@ import AdminReports from '../pages/Admin/AdminReports';
 const AppRoutes = () => {
   return (
     <Routes>
+
       {/* Public routes */}
       <Route path="/" element={<Landing />} />
       <Route path="/login" element={<Login />} />
@@ -37,6 +39,7 @@ const AppRoutes = () => {
 
       {/* Authenticated Layout Wrapper */}
       <Route element={<DashboardLayout />}>
+
         {/* Shared Profile & Common Routes */}
         <Route path="/profile" element={<Profile />} />
         <Route path="/notifications" element={<Notifications />} />
@@ -46,6 +49,13 @@ const AppRoutes = () => {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/farms" element={<Farms />} />
         <Route path="/crops" element={<Crops />} />
+
+        {/* AI Crop Recommendation */}
+        <Route
+          path="/crop-recommendation"
+          element={<CropRecommendation />}
+        />
+
         <Route path="/irrigation" element={<Irrigation />} />
         <Route path="/fertilizer" element={<Fertilizer />} />
         <Route path="/reports" element={<Reports />} />
@@ -60,10 +70,12 @@ const AppRoutes = () => {
           <Route path="/admin/fertilizers" element={<AdminFertilizers />} />
           <Route path="/admin/reports" element={<AdminReports />} />
         </Route>
+
       </Route>
 
       {/* 404 */}
       <Route path="*" element={<NotFound />} />
+
     </Routes>
   );
 };
