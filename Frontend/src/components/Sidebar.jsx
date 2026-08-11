@@ -24,6 +24,7 @@ const farmerNavItems = [
   { name: 'Fertilizer', icon: RiFlaskLine, path: '/fertilizer' },
   { name: 'Reports', icon: RiBarChart2Line, path: '/reports' },
   { name: 'Profile', icon: RiUserLine, path: '/profile' },
+  { name: 'AI Farming Assistant', icon: RiQuestionLine, path: '/ai-assistant' },
 ];
 
 const adminNavItems = [
