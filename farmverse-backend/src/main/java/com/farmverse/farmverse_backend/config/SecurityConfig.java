@@ -47,6 +47,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
 
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/auth/**", "/api/ai/**", "/error", "/v3/api-docs/**", "/swagger-ui/**").permitAll()
 
                         // Authentication, error, and Swagger APIs are publicly accessible
                         .requestMatchers(

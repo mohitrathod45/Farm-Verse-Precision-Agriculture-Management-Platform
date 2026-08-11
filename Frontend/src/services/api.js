@@ -44,5 +44,16 @@ api.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+export const askAI = async (question) => {
+  const response = await axios.get(
+    'http://localhost:8081/api/ai/ask',
+    {
+      params: {
+        question: question
+      }
+    }
+  );
 
+  return response.data;
+};
 export default api;
