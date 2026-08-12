@@ -204,29 +204,41 @@ const Dashboard = () => {
   return (
     <>
       {/* Welcome Hero */}
-      <div className="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-border-light mb-8 flex flex-col md:flex-row md:items-center justify-between relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl pointer-events-none translate-x-1/3 -translate-y-1/3" />
+      <div className="bg-gradient-to-r from-emerald-800 via-emerald-700 to-emerald-600 rounded-2xl p-6 sm:p-8 shadow-md border border-emerald-700/50 mb-8 flex flex-col md:flex-row md:items-center justify-between relative overflow-hidden text-white">
+        {/* Soft Nature/Green Glow & Decorative Watermark */}
+        <div className="absolute top-0 right-0 w-80 h-80 bg-emerald-400/20 rounded-full blur-3xl pointer-events-none translate-x-1/4 -translate-y-1/4" />
+        <div className="absolute -bottom-10 right-1/3 w-60 h-60 bg-emerald-900/30 rounded-full blur-2xl pointer-events-none" />
+        <div className="absolute right-6 top-1/2 -translate-y-1/2 opacity-20 pointer-events-none hidden lg:block text-emerald-200">
+          <RiPlantLine className="text-[170px]" />
+        </div>
+
+        {/* Content Area */}
         <div className="relative z-10 max-w-2xl mb-6 md:mb-0">
-          <p className="text-primary font-bold text-sm mb-2 uppercase tracking-wide">{today}</p>
-          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-text-dark mb-2">
+          <div className="inline-flex items-center space-x-2 px-3.5 py-1 bg-white/15 backdrop-blur-md border border-white/20 rounded-full text-emerald-100 font-semibold text-xs mb-3 tracking-wide">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-300 animate-pulse"></span>
+            <span>{today}</span>
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white mb-2 font-display">
             Welcome back, {userFullName}! 🌱
           </h1>
-          <p className="text-text-muted text-sm">
+          <p className="text-emerald-100/90 text-sm leading-relaxed">
             Manage your farms, crops, irrigation schedules, fertilizer usage, and agricultural activities from one centralized dashboard.
           </p>
         </div>
+
+        {/* Action Buttons */}
         <div className="relative z-10 flex flex-col sm:flex-row gap-3">
           <button 
             onClick={() => navigate('/farms')}
-            className="px-5 py-2.5 bg-primary text-white text-sm font-bold rounded-xl shadow-sm hover:shadow-md hover:bg-primary/90 transition-all cursor-pointer"
+            className="px-5 py-2.5 bg-white text-emerald-950 hover:bg-emerald-50 text-sm font-extrabold rounded-xl shadow-sm hover:shadow transition-all cursor-pointer flex items-center justify-center space-x-2"
           >
-            Add Farm
+            <span>Add Farm</span>
           </button>
           <button 
             onClick={() => navigate('/reports')}
-            className="px-5 py-2.5 bg-white text-text-dark text-sm font-bold border border-border-light rounded-xl hover:bg-bg-light transition-all cursor-pointer"
+            className="px-5 py-2.5 bg-white/10 hover:bg-white/20 text-white border border-white/30 backdrop-blur-sm text-sm font-bold rounded-xl transition-all cursor-pointer flex items-center justify-center space-x-2"
           >
-            View Reports
+            <span>View Reports</span>
           </button>
         </div>
       </div>

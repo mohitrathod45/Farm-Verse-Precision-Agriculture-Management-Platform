@@ -16,6 +16,7 @@ import ConfirmModal from '../../components/ConfirmModal';
 import ReportViewerModal from '../../components/ReportViewerModal';
 import { formatDate } from '../../utils/dateUtils';
 import { useAuth } from '../../context/AuthContext';
+import PageHeader from '../../components/PageHeader';
 
 const Reports = () => {
   const { user } = useAuth();
@@ -198,21 +199,19 @@ const Reports = () => {
   return (
     <>
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4">
-        <div>
-          <h1 className="text-2xl font-extrabold text-text-dark font-display">Reports Management</h1>
-          <p className="text-sm text-text-muted mt-1">Generate, view, download PDF, and print official agricultural reports.</p>
-        </div>
-        <div className="flex items-center space-x-3">
+      <PageHeader
+        title="Reports"
+        description="View and manage your farm reports and observations."
+        action={
           <button
             onClick={openAddModal}
-            className="inline-flex items-center space-x-2 px-5 py-2.5 bg-primary text-white text-sm font-bold rounded-xl shadow-sm hover:shadow-md hover:bg-primary/90 transition-all cursor-pointer"
+            className="inline-flex items-center space-x-2 px-5 py-2.5 bg-white text-emerald-950 hover:bg-emerald-50 text-sm font-extrabold rounded-xl shadow-sm hover:shadow transition-all cursor-pointer"
           >
             <RiAddLine className="text-lg" />
             <span>Generate Report</span>
           </button>
-        </div>
-      </div>
+        }
+      />
 
       {/* Search */}
       <div className="mb-6">

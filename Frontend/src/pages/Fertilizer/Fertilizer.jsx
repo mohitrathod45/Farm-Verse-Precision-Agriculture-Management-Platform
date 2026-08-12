@@ -4,6 +4,7 @@ import toast from 'react-hot-toast';
 import api from '../../services/api';
 import ConfirmModal from '../../components/ConfirmModal';
 import { formatDate } from '../../utils/dateUtils';
+import PageHeader from '../../components/PageHeader';
 
 const Fertilizer = () => {
   const [fertilizers, setFertilizers]   = useState([]);
@@ -188,19 +189,19 @@ const Fertilizer = () => {
   return (
     <>
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4">
-        <div>
-          <h1 className="text-2xl font-extrabold text-text-dark">Fertilizer Management</h1>
-          <p className="text-sm text-text-muted mt-1">Track fertilizer applications and upcoming schedules.</p>
-        </div>
-        <button
-          onClick={openAddModal}
-          className="inline-flex items-center space-x-2 px-5 py-2.5 bg-primary text-white text-sm font-bold rounded-xl shadow-sm hover:shadow-md hover:bg-primary/90 transition-all cursor-pointer"
-        >
-          <RiAddLine className="text-lg" />
-          <span>Add Fertilizer</span>
-        </button>
-      </div>
+      <PageHeader
+        title="Fertilizer"
+        description="Manage fertilizer usage and application records."
+        action={
+          <button
+            onClick={openAddModal}
+            className="inline-flex items-center space-x-2 px-5 py-2.5 bg-white text-emerald-950 hover:bg-emerald-50 text-sm font-extrabold rounded-xl shadow-sm hover:shadow transition-all cursor-pointer"
+          >
+            <RiAddLine className="text-lg" />
+            <span>Add Fertilizer</span>
+          </button>
+        }
+      />
 
       {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">

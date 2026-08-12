@@ -15,6 +15,7 @@ import api from '../../services/api';
 import ConfirmModal from '../../components/ConfirmModal';
 import { formatDate } from '../../utils/dateUtils';
 import { getCropImage, DEFAULT_CROP_IMAGE } from '../../utils/cropImageMapper';
+import PageHeader from '../../components/PageHeader';
 
 const statusColorMap = {
   Growing: 'bg-green-100 text-green-700',
@@ -215,53 +216,39 @@ const Crops = () => {
   return (
     <>
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4">
-
-        <div>
-          <h1 className="text-2xl font-extrabold text-text-dark">
-            Crop Management
-          </h1>
-
-          <p className="text-sm text-text-muted mt-1">
-            Track all your crops, growth stages, and harvest timelines.
-          </p>
-        </div>
-
-        {/* Header Buttons */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-
-          {/* Crop Recommendation Button */}
-          <button
-            onClick={() => navigate('/crop-recommendation')}
-            className="inline-flex items-center justify-center space-x-2 px-5 py-2.5 bg-primary text-white text-sm font-bold rounded-xl shadow-sm hover:shadow-md hover:bg-primary/90 transition-all cursor-pointer"
-          >
-            <RiPlantLine className="text-lg" />
-            <span>Crop Recommendation</span>
-          </button>
-
-          {/* Add Crop Button */}
-          <button
-            onClick={() => {
-              setFormData({
-                farmId: farms.length > 0 ? farms[0].farmId : '',
-                cropName: '',
-                season: 'Kharif',
-                sowingDate: '',
-                harvestingDate: '',
-                status: 'Growing'
-              });
-
-              setErrors({});
-              setIsModalOpen(true);
-            }}
-            className="inline-flex items-center justify-center space-x-2 px-5 py-2.5 bg-primary text-white text-sm font-bold rounded-xl shadow-sm hover:shadow-md hover:bg-primary/90 transition-all cursor-pointer"
-          >
-            <RiAddLine className="text-lg" />
-            <span>Add Crop</span>
-          </button>
-
-        </div>
-      </div>
+      <PageHeader
+        title="Crop Management"
+        description="Manage and monitor the crops across your farms."
+        action={
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+            <button
+              onClick={() => navigate('/crop-recommendation')}
+              className="inline-flex items-center justify-center space-x-2 px-5 py-2.5 bg-white/10 hover:bg-white/20 text-white border border-white/30 backdrop-blur-sm text-sm font-bold rounded-xl transition-all cursor-pointer"
+            >
+              <RiPlantLine className="text-lg" />
+              <span>Crop Recommendation</span>
+            </button>
+            <button
+              onClick={() => {
+                setFormData({
+                  farmId: farms.length > 0 ? farms[0].farmId : '',
+                  cropName: '',
+                  season: 'Kharif',
+                  sowingDate: '',
+                  harvestingDate: '',
+                  status: 'Growing'
+                });
+                setErrors({});
+                setIsModalOpen(true);
+              }}
+              className="inline-flex items-center justify-center space-x-2 px-5 py-2.5 bg-white text-emerald-950 hover:bg-emerald-50 text-sm font-extrabold rounded-xl shadow-sm hover:shadow transition-all cursor-pointer"
+            >
+              <RiAddLine className="text-lg" />
+              <span>Add Crop</span>
+            </button>
+          </div>
+        }
+      />
 
       {/* Search & Filter */}
       <div className="flex flex-col sm:flex-row gap-3 mb-6">

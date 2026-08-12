@@ -13,6 +13,7 @@ import {
   RiQuestionLine,
   RiGroupLine,
   RiShieldUserLine,
+  RiSunCloudyLine,
 } from 'react-icons/ri';
 import { useAuth } from '../context/AuthContext';
 
@@ -23,6 +24,7 @@ const farmerNavItems = [
   { name: 'Irrigation', icon: RiDropLine, path: '/irrigation' },
   { name: 'Fertilizer', icon: RiFlaskLine, path: '/fertilizer' },
   { name: 'Reports', icon: RiBarChart2Line, path: '/reports' },
+  { name: 'Weather', icon: RiSunCloudyLine, path: '/weather' },
   { name: 'Profile', icon: RiUserLine, path: '/profile' },
   { name: 'AI Farming Assistant', icon: RiQuestionLine, path: '/ai-assistant' },
 ];
@@ -35,6 +37,7 @@ const adminNavItems = [
   { name: 'Irrigation', icon: RiDropLine, path: '/admin/irrigation' },
   { name: 'Fertilizer', icon: RiFlaskLine, path: '/admin/fertilizers' },
   { name: 'Reports', icon: RiBarChart2Line, path: '/admin/reports' },
+  { name: 'Weather', icon: RiSunCloudyLine, path: '/weather' },
   { name: 'Profile', icon: RiUserLine, path: '/profile' },
 ];
 

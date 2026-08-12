@@ -17,6 +17,7 @@ import {
   RiImageAddLine,
 } from "react-icons/ri";
 import api from "../../services/api";
+import PageHeader from "../../components/PageHeader";
 
 // ─── Skeleton Loader ──────────────────────────────────────────────────────────
 const SkeletonBox = ({ className }) => (
@@ -287,13 +288,11 @@ const Profile = () => {
   // ─────────────────────────────────────────────────────────────────────────
   return (
     <>
-      {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-2xl font-extrabold text-text-dark">Profile</h1>
-        <p className="text-sm text-text-muted mt-1">
-          Manage your personal information and account settings.
-        </p>
-      </div>
+      {/* Page Header */}
+      <PageHeader
+        title="Profile"
+        description="Manage your account information and preferences."
+      />
 
       {loading ? (
         <ProfileSkeleton />

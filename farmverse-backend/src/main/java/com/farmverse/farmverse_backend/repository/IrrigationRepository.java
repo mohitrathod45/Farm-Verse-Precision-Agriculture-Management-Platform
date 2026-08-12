@@ -14,6 +14,8 @@ public interface IrrigationRepository extends JpaRepository<Irrigation, Integer>
 
     List<Irrigation> findByFarmId(Integer farmId);
 
+    boolean existsByFarmId(Integer farmId);
+
     @Query("SELECT i FROM Irrigation i WHERE i.farmId IN (SELECT f.farmId FROM Farm f WHERE f.userId = :userId)")
     List<Irrigation> findByUserId(@Param("userId") Integer userId);
 

@@ -14,6 +14,7 @@ import CropRecommendation from '../pages/CropRecommendation/CropRecommendation';
 import Irrigation from '../pages/Irrigation/Irrigation';
 import Fertilizer from '../pages/Fertilizer/Fertilizer';
 import Reports from '../pages/Reports/Reports';
+import Weather from '../pages/Weather/Weather';
 import Profile from '../pages/Profile/Profile';
 import Notifications from '../pages/Notifications/Notifications';
 import Help from '../pages/Help/Help';
@@ -60,6 +61,7 @@ const AppRoutes = () => {
         <Route path="/irrigation" element={<Irrigation />} />
         <Route path="/fertilizer" element={<Fertilizer />} />
         <Route path="/reports" element={<Reports />} />
+        <Route path="/weather" element={<Weather />} />
         <Route path="/ai-assistant" element={<AiFarmingAssistant />} />
 
         {/* Admin Protected Routes */}

@@ -14,6 +14,8 @@ public interface FertilizerRepository extends JpaRepository<Fertilizer, Integer>
 
     List<Fertilizer> findByFarmId(Integer farmId);
 
+    boolean existsByFarmId(Integer farmId);
+
     @Query("SELECT ft FROM Fertilizer ft WHERE ft.farmId IN (SELECT f.farmId FROM Farm f WHERE f.userId = :userId)")
     List<Fertilizer> findByUserId(@Param("userId") Integer userId);
 

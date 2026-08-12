@@ -5,6 +5,8 @@ import api from '../../services/api';
 import ConfirmModal from '../../components/ConfirmModal';
 import { getFarmImage, DEFAULT_FARM_IMAGE } from '../../utils/farmImageMapper';
 
+import PageHeader from '../../components/PageHeader';
+
 const Farms = () => {
   const [farms, setFarms] = useState([]);
   const [userId, setUserId] = useState(null);
@@ -140,37 +142,37 @@ const Farms = () => {
       setDeleting(true);
       await api.delete(`/farms/deletefarm/${deletingId}`);
       toast.success('Farm Deleted Successfully');
-      setDeleteModalOpen(false);
-      setDeletingId(null);
       fetchFarms();
     } catch (error) {
       console.error('Error deleting farm:', error);
       toast.error(error.response?.data?.message || 'Failed to delete farm.');
     } finally {
       setDeleting(false);
+      setDeleteModalOpen(false);
+      setDeletingId(null);
     }
   };
 
   return (
     <>
       {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4">
-        <div>
-          <h1 className="text-2xl font-extrabold text-text-dark">My Farms</h1>
-          <p className="text-sm text-text-muted mt-1">Manage and organize all your farm properties.</p>
-        </div>
-        <button 
-          onClick={() => {
-            setFormData({ farmName: '', location: '', area: '', soilType: 'Loamy Soil' });
-            setErrors({});
-            setIsModalOpen(true);
-          }}
-          className="inline-flex items-center space-x-2 px-5 py-2.5 bg-primary text-white text-sm font-bold rounded-xl shadow-sm hover:shadow-md hover:bg-primary/90 transition-all cursor-pointer"
-        >
-          <RiAddLine className="text-lg" />
-          <span>Add Farm</span>
-        </button>
-      </div>
+      <PageHeader
+        title="My Farms"
+        description="Manage and organize all your farm properties."
+        action={
+          <button 
+            onClick={() => {
+              setFormData({ farmName: '', location: '', area: '', soilType: 'Loamy Soil' });
+              setErrors({});
+              setIsModalOpen(true);
+            }}
+            className="inline-flex items-center space-x-2 px-5 py-2.5 bg-white text-emerald-950 hover:bg-emerald-50 text-sm font-extrabold rounded-xl shadow-sm hover:shadow transition-all cursor-pointer"
+          >
+            <RiAddLine className="text-lg" />
+            <span>Add Farm</span>
+          </button>
+        }
+      />
 
       {/* Search & Filter */}
       <div className="flex flex-col sm:flex-row gap-3 mb-6">

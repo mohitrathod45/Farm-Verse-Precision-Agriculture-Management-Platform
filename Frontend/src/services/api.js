@@ -44,16 +44,35 @@ api.interceptors.response.use(
     return Promise.reject(error);
   }
 );
-export const askAI = async (question) => {
-  const response = await axios.get(
-    'http://localhost:8081/api/ai/ask',
-    {
-      params: {
-        question: question
-      }
-    }
-  );
 
-  return response.data;
+export const askAI = async (question) => {
+  try {
+    const response = await api.get('/ai/ask', {
+      params: {
+        question: question,
+      },
+      timeout: 30000, // 30-second timeout
+    });
+
+    const data = response.data;
+    if (typeof data === 'string' && data.trim()) return data.trim();
+    if (data && typeof data === 'object') {
+      return data.answer || data.response || data.message || data.content || JSON.stringify(data);
+    }
+    return String(data || "I couldn't generate a response. Please try again.");
+  } catch (error) {
+    console.error("AI request failed:", error);
+    console.error("Response data:", error.response?.data);
+    console.error("Response status:", error.response?.status);
+
+    const errorMsg =
+      error.response?.data?.message ||
+      error.response?.data?.error ||
+      (typeof error.response?.data === 'string' ? error.response.data : null) ||
+      error.message ||
+      "Sorry, I couldn't get a response right now. Please try again.";
+    throw new Error(errorMsg);
+  }
 };
+
 export default api;

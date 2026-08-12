@@ -32,10 +32,18 @@ const Login = () => {
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(loginSchema)
   });
+
+  const handleRoleSwitch = (role) => {
+    if (role !== selectedRole) {
+      setSelectedRole(role);
+      reset({ email: '', password: '' });
+    }
+  };
 
   const onSubmit = async (data) => {
     setIsLoading(true);
@@ -99,7 +107,7 @@ const Login = () => {
               <div className="grid grid-cols-2 gap-2.5 p-1 bg-bg-light/80 rounded-2xl border border-gray-200/80">
                 <button
                   type="button"
-                  onClick={() => setSelectedRole('Farmer')}
+                  onClick={() => handleRoleSwitch('Farmer')}
                   className={`flex items-center justify-center space-x-2 py-2.5 px-3 rounded-xl text-xs font-bold transition-all duration-300 cursor-pointer ${
                     selectedRole === 'Farmer'
                       ? 'bg-primary text-white shadow-md shadow-primary/25 scale-[1.02]'
@@ -112,7 +120,7 @@ const Login = () => {
 
                 <button
                   type="button"
-                  onClick={() => setSelectedRole('Admin')}
+                  onClick={() => handleRoleSwitch('Admin')}
                   className={`flex items-center justify-center space-x-2 py-2.5 px-3 rounded-xl text-xs font-bold transition-all duration-300 cursor-pointer ${
                     selectedRole === 'Admin'
                       ? 'bg-primary text-white shadow-md shadow-primary/25 scale-[1.02]'

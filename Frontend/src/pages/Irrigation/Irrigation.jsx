@@ -5,6 +5,7 @@ import api from '../../services/api';
 import ConfirmModal from '../../components/ConfirmModal';
 import { formatDate } from '../../utils/dateUtils';
 import { getIrrigationImage, DEFAULT_IRRIGATION_IMAGE } from '../../utils/irrigationImageMapper';
+import PageHeader from '../../components/PageHeader';
 
 const typeColorMap = {
   'Drip Irrigation':   'bg-blue-100 text-blue-700',
@@ -35,7 +36,6 @@ const Irrigation = () => {
     farmId:         '',
     irrigationType: 'Drip Irrigation',
     scheduleDate:   '',
-    waterQuantity:  '',
     remarks:        '',
   });
 
@@ -82,16 +82,13 @@ const Irrigation = () => {
   const validateForm = () => {
     const newErrors = {};
     if (!formData.farmId) {
-      newErrors.farmId = 'Farm selection is required';
+      newErrors.farmId = 'Please select a farm';
     }
     if (!formData.irrigationType) {
-      newErrors.irrigationType = 'Irrigation Type is required';
-    }
-    if (!formData.waterQuantity || parseFloat(formData.waterQuantity) <= 0) {
-      newErrors.waterQuantity = 'Water Quantity must be greater than 0';
+      newErrors.irrigationType = 'Please select an irrigation type';
     }
     if (!formData.scheduleDate) {
-      newErrors.scheduleDate = 'Schedule Date is required';
+      newErrors.scheduleDate = 'Please select a schedule date';
     }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -100,11 +97,12 @@ const Irrigation = () => {
   // Open modal (Add)
   const openAddModal = () => {
     setEditId(null);
+    const defaultFarmId = farms.length > 0 ? farms[0].farmId : '';
+    const defaultDate = new Date().toISOString().split('T')[0];
     setFormData({
-      farmId:         farms.length > 0 ? farms[0].farmId : '',
+      farmId:         defaultFarmId,
       irrigationType: 'Drip Irrigation',
-      scheduleDate:   '',
-      waterQuantity:  '',
+      scheduleDate:   defaultDate,
       remarks:        '',
     });
     setErrors({});
@@ -118,7 +116,6 @@ const Irrigation = () => {
       farmId:         item.farmId ?? (farms.length > 0 ? farms[0].farmId : ''),
       irrigationType: item.irrigationType ?? 'Drip Irrigation',
       scheduleDate:   item.scheduleDate ?? '',
-      waterQuantity:  item.waterQuantity ?? '',
       remarks:        item.remarks ?? '',
     });
     setErrors({});
@@ -136,8 +133,8 @@ const Irrigation = () => {
         farmId:         parseInt(formData.farmId),
         irrigationType: formData.irrigationType,
         scheduleDate:   formData.scheduleDate,
-        waterQuantity:  parseFloat(formData.waterQuantity),
-        remarks:        formData.remarks || null,
+        waterQuantity:  null,
+        remarks:        formData.remarks ? formData.remarks.trim() : null,
       };
 
       if (editId) {
@@ -184,33 +181,29 @@ const Irrigation = () => {
     }
   };
 
-  // Stats calculation
-  const totalWater = irrigations.reduce((sum, i) =>
-    sum + (parseFloat(i.waterQuantity) || 0), 0).toFixed(1);
-
   const stats = [
-    { title: 'Total Records', value: irrigations.length,  color: 'text-primary',   desc: 'All time' },
+    { title: 'Total Records', value: irrigations.length, color: 'text-primary', desc: 'All time' },
     { title: 'Drip Irrigation', value: irrigations.filter(i => i.irrigationType === 'Drip Irrigation').length, color: 'text-sky', desc: 'Sessions' },
-    { title: 'Sprinkler',     value: irrigations.filter(i => i.irrigationType === 'Sprinkler').length, color: 'text-accent', desc: 'Sessions' },
-    { title: 'Water Used',    value: `${totalWater} Litres`, color: 'text-secondary', desc: 'Total quantity' },
+    { title: 'Sprinkler', value: irrigations.filter(i => i.irrigationType === 'Sprinkler' || i.irrigationType === 'Sprinkler Irrigation').length, color: 'text-accent', desc: 'Sessions' },
+    { title: 'Flood Irrigation', value: irrigations.filter(i => i.irrigationType === 'Flood Irrigation').length, color: 'text-secondary', desc: 'Sessions' },
   ];
 
   return (
     <>
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4">
-        <div>
-          <h1 className="text-2xl font-extrabold text-text-dark">Irrigation Management</h1>
-          <p className="text-sm text-text-muted mt-1">Schedule and track irrigation activities across your farms.</p>
-        </div>
-        <button
-          onClick={openAddModal}
-          className="inline-flex items-center space-x-2 px-5 py-2.5 bg-primary text-white text-sm font-bold rounded-xl shadow-sm hover:shadow-md hover:bg-primary/90 transition-all cursor-pointer"
-        >
-          <RiAddLine className="text-lg" />
-          <span>Add Irrigation</span>
-        </button>
-      </div>
+      <PageHeader
+        title="Irrigation"
+        description="Schedule and manage irrigation activities for your farms."
+        action={
+          <button
+            onClick={openAddModal}
+            className="inline-flex items-center space-x-2 px-5 py-2.5 bg-white text-emerald-950 hover:bg-emerald-50 text-sm font-extrabold rounded-xl shadow-sm hover:shadow transition-all cursor-pointer"
+          >
+            <RiAddLine className="text-lg" />
+            <span>Add Irrigation</span>
+          </button>
+        }
+      />
 
       {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
@@ -269,7 +262,7 @@ const Irrigation = () => {
         </div>
       ) : (
         <>
-          {/* Cards Grid with Hero Images */}
+          {/* Cards Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-8">
             {filtered.map(item => (
               <div
@@ -298,23 +291,13 @@ const Irrigation = () => {
                 <div className="p-5 flex-1 flex flex-col justify-between">
                   <div>
                     <h3 className="text-base font-bold text-text-dark">{getFarmName(item.farmId)}</h3>
-                    <p className="text-xs text-text-muted mt-0.5 mb-3">
-                      {formatDate(item.scheduleDate)}
+                    <p className="text-xs text-text-muted mt-0.5 mb-3 flex items-center space-x-1">
+                      <RiCalendarCheckLine className="text-primary" />
+                      <span>{formatDate(item.scheduleDate)}</span>
                     </p>
 
-                    <div className="flex items-center justify-between text-xs text-text-muted mb-4">
-                      <span className="flex items-center space-x-1">
-                        <RiDropLine className="text-sky" />
-                        <span>{item.waterQuantity ? `${item.waterQuantity} Litres` : '—'}</span>
-                      </span>
-                      <span className="flex items-center space-x-1">
-                        <RiCalendarCheckLine className="text-primary" />
-                        <span>{formatDate(item.scheduleDate)}</span>
-                      </span>
-                    </div>
-
                     {item.remarks && (
-                      <p className="text-xs text-text-muted italic mb-3 truncate">&ldquo;{item.remarks}&rdquo;</p>
+                      <p className="text-xs text-text-muted italic mb-3 line-clamp-2">&ldquo;{item.remarks}&rdquo;</p>
                     )}
                   </div>
 
@@ -345,9 +328,8 @@ const Irrigation = () => {
                 <thead>
                   <tr className="border-b border-border-light">
                     <th className="pb-3 text-xs font-bold text-text-muted uppercase tracking-wider px-4">Farm</th>
-                    <th className="pb-3 text-xs font-bold text-text-muted uppercase tracking-wider px-4">Type</th>
+                    <th className="pb-3 text-xs font-bold text-text-muted uppercase tracking-wider px-4">Irrigation Type</th>
                     <th className="pb-3 text-xs font-bold text-text-muted uppercase tracking-wider px-4">Schedule Date</th>
-                    <th className="pb-3 text-xs font-bold text-text-muted uppercase tracking-wider px-4">Water Quantity</th>
                     <th className="pb-3 text-xs font-bold text-text-muted uppercase tracking-wider px-4">Remarks</th>
                     <th className="pb-3 text-xs font-bold text-text-muted uppercase tracking-wider px-4 text-right">Actions</th>
                   </tr>
@@ -367,10 +349,9 @@ const Irrigation = () => {
                         />
                         <span>{getFarmName(item.farmId)}</span>
                       </td>
-                      <td className="py-3.5 px-4 text-sm text-text-muted">{item.irrigationType || '—'}</td>
+                      <td className="py-3.5 px-4 text-sm text-text-muted font-medium">{item.irrigationType || '—'}</td>
                       <td className="py-3.5 px-4 text-sm text-text-muted">{formatDate(item.scheduleDate)}</td>
-                      <td className="py-3.5 px-4 text-sm font-bold text-sky">{item.waterQuantity ? `${item.waterQuantity} Litres` : '—'}</td>
-                      <td className="py-3.5 px-4 text-sm text-text-muted max-w-[180px] truncate">{item.remarks || '—'}</td>
+                      <td className="py-3.5 px-4 text-sm text-text-muted max-w-[220px] truncate">{item.remarks || '—'}</td>
                       <td className="py-3.5 px-4 text-right">
                         <div className="inline-flex items-center space-x-2">
                           <button
@@ -396,14 +377,14 @@ const Irrigation = () => {
         </>
       )}
 
-      {/* Add / Edit Modal */}
+      {/* Clean & Simple Add / Edit Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
           <div className="bg-white rounded-3xl max-w-md w-full shadow-2xl border border-border-light overflow-hidden transform transition-all duration-300">
 
             {/* Modal Header */}
             <div className="px-6 py-4 border-b border-border-light flex items-center justify-between">
-              <h3 className="text-lg font-extrabold text-text-dark">
+              <h3 className="text-lg font-extrabold text-text-dark font-display">
                 {editId ? 'Edit Irrigation' : 'Add Irrigation'}
               </h3>
               <button
@@ -418,91 +399,78 @@ const Irrigation = () => {
             {/* Modal Form */}
             <form onSubmit={handleSubmit} className="p-6 space-y-4">
 
-              {/* Farm Dropdown + Irrigation Type */}
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-bold text-text-muted uppercase tracking-wider mb-2">Farm *</label>
-                  <select
-                    value={formData.farmId}
-                    onChange={e => {
-                      setFormData({ ...formData, farmId: e.target.value });
-                      if (errors.farmId) setErrors({ ...errors, farmId: null });
-                    }}
-                    className={`w-full px-4 py-2.5 bg-bg-light border rounded-xl text-sm focus:outline-none focus:ring-2 transition-all text-text-dark cursor-pointer ${
-                      errors.farmId ? 'border-red-500 focus:ring-red-200' : 'border-border-light focus:ring-primary/20 focus:border-primary'
-                    }`}
-                  >
-                    {farms.length === 0 && <option value="">No farms available</option>}
-                    {farms.map(f => (
-                      <option key={f.farmId} value={f.farmId}>
-                        {f.farmName} (#{f.farmId})
-                      </option>
-                    ))}
-                  </select>
-                  {errors.farmId && <p className="text-xs text-red-500 font-semibold mt-1">{errors.farmId}</p>}
-                </div>
-
-                <div>
-                  <label className="block text-xs font-bold text-text-muted uppercase tracking-wider mb-2">Irrigation Type *</label>
-                  <select
-                    value={formData.irrigationType}
-                    onChange={e => setFormData({ ...formData, irrigationType: e.target.value })}
-                    className="w-full px-4 py-2.5 bg-bg-light border border-border-light rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-text-dark cursor-pointer"
-                  >
-                    <option>Drip Irrigation</option>
-                    <option>Sprinkler</option>
-                    <option>Flood Irrigation</option>
-                    <option>Surface Irrigation</option>
-                  </select>
-                </div>
-              </div>
-
-              {/* Schedule Date + Water Quantity */}
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-bold text-text-muted uppercase tracking-wider mb-2">Schedule Date *</label>
-                  <input
-                    type="date"
-                    value={formData.scheduleDate}
-                    onChange={e => {
-                      setFormData({ ...formData, scheduleDate: e.target.value });
-                      if (errors.scheduleDate) setErrors({ ...errors, scheduleDate: null });
-                    }}
-                    className={`w-full px-4 py-2.5 bg-bg-light border rounded-xl text-sm focus:outline-none focus:ring-2 transition-all text-text-dark ${
-                      errors.scheduleDate ? 'border-red-500 focus:ring-red-200' : 'border-border-light focus:ring-primary/20 focus:border-primary'
-                    }`}
-                  />
-                  {errors.scheduleDate && <p className="text-xs text-red-500 font-semibold mt-1">{errors.scheduleDate}</p>}
-                </div>
-
-                <div>
-                  <label className="block text-xs font-bold text-text-muted uppercase tracking-wider mb-2">Water Quantity (L) *</label>
-                  <input
-                    type="number"
-                    step="0.01"
-                    value={formData.waterQuantity}
-                    onChange={e => {
-                      setFormData({ ...formData, waterQuantity: e.target.value });
-                      if (errors.waterQuantity) setErrors({ ...errors, waterQuantity: null });
-                    }}
-                    placeholder="e.g. 500"
-                    className={`w-full px-4 py-2.5 bg-bg-light border rounded-xl text-sm focus:outline-none focus:ring-2 transition-all text-text-dark ${
-                      errors.waterQuantity ? 'border-red-500 focus:ring-red-200' : 'border-border-light focus:ring-primary/20 focus:border-primary'
-                    }`}
-                  />
-                  {errors.waterQuantity && <p className="text-xs text-red-500 font-semibold mt-1">{errors.waterQuantity}</p>}
-                </div>
-              </div>
-
-              {/* Remarks */}
+              {/* 1. Farm Dropdown */}
               <div>
-                <label className="block text-xs font-bold text-text-muted uppercase tracking-wider mb-2">Remarks</label>
+                <label className="block text-xs font-bold text-text-dark uppercase tracking-wider mb-1.5">
+                  Farm *
+                </label>
+                <select
+                  value={formData.farmId}
+                  onChange={e => {
+                    setFormData({ ...formData, farmId: e.target.value });
+                    if (errors.farmId) setErrors({ ...errors, farmId: null });
+                  }}
+                  className={`w-full px-4 py-2.5 bg-bg-light/60 border rounded-xl text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-text-dark cursor-pointer ${
+                    errors.farmId ? 'border-red-500 focus:ring-red-200' : 'border-border-light'
+                  }`}
+                >
+                  {farms.length === 0 && <option value="">No farms available</option>}
+                  {farms.map(f => (
+                    <option key={f.farmId} value={f.farmId}>
+                      {f.farmName} (#{f.farmId})
+                    </option>
+                  ))}
+                </select>
+                {errors.farmId && <p className="text-xs text-red-500 font-semibold mt-1">{errors.farmId}</p>}
+              </div>
+
+              {/* 2. Irrigation Type Dropdown */}
+              <div>
+                <label className="block text-xs font-bold text-text-dark uppercase tracking-wider mb-1.5">
+                  Irrigation Type *
+                </label>
+                <select
+                  value={formData.irrigationType}
+                  onChange={e => setFormData({ ...formData, irrigationType: e.target.value })}
+                  className="w-full px-4 py-2.5 bg-bg-light/60 border border-border-light rounded-xl text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-text-dark cursor-pointer"
+                >
+                  <option value="Drip Irrigation">Drip Irrigation</option>
+                  <option value="Sprinkler Irrigation">Sprinkler Irrigation</option>
+                  <option value="Flood Irrigation">Flood Irrigation</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+
+              {/* 3. Schedule Date */}
+              <div>
+                <label className="block text-xs font-bold text-text-dark uppercase tracking-wider mb-1.5">
+                  Schedule Date *
+                </label>
+                <input
+                  type="date"
+                  value={formData.scheduleDate}
+                  onChange={e => {
+                    setFormData({ ...formData, scheduleDate: e.target.value });
+                    if (errors.scheduleDate) setErrors({ ...errors, scheduleDate: null });
+                  }}
+                  className={`w-full px-4 py-2.5 bg-bg-light/60 border rounded-xl text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-text-dark ${
+                    errors.scheduleDate ? 'border-red-500 focus:ring-red-200' : 'border-border-light'
+                  }`}
+                />
+                {errors.scheduleDate && <p className="text-xs text-red-500 font-semibold mt-1">{errors.scheduleDate}</p>}
+              </div>
+
+              {/* 4. Remarks (Optional) */}
+              <div>
+                <label className="block text-xs font-bold text-text-dark uppercase tracking-wider mb-1.5">
+                  Remarks <span className="text-text-muted font-normal lowercase">(optional)</span>
+                </label>
                 <textarea
                   value={formData.remarks}
                   onChange={e => setFormData({ ...formData, remarks: e.target.value })}
-                  placeholder="Optional notes or remarks..."
+                  placeholder="Optional notes..."
                   rows={3}
-                  className="w-full px-4 py-2.5 bg-bg-light border border-border-light rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-text-dark resize-none"
+                  className="w-full px-4 py-2.5 bg-bg-light/60 border border-border-light rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-text-dark resize-none"
                 />
               </div>
 
@@ -511,14 +479,14 @@ const Irrigation = () => {
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 bg-white border border-border-light text-text-dark text-sm font-bold rounded-xl hover:bg-bg-light transition-all cursor-pointer"
+                  className="px-4 py-2.5 bg-white border border-border-light text-text-dark text-sm font-bold rounded-xl hover:bg-bg-light transition-all cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="px-5 py-2 bg-primary text-white text-sm font-bold rounded-xl hover:bg-primary/90 transition-all shadow-sm disabled:opacity-50 cursor-pointer flex items-center space-x-2"
+                  className="px-5 py-2.5 bg-primary text-white text-sm font-bold rounded-xl hover:bg-primary/90 transition-all shadow-sm disabled:opacity-50 cursor-pointer flex items-center space-x-2"
                 >
                   {submitting ? (editId ? 'Updating...' : 'Adding...') : editId ? 'Update Irrigation' : 'Add Irrigation'}
                 </button>
@@ -532,7 +500,7 @@ const Irrigation = () => {
       {/* Delete Confirmation Modal */}
       <ConfirmModal
         isOpen={deleteModalOpen}
-        title="Delete Irrigation?"
+        title="Delete Irrigation Record?"
         message="Are you sure you want to delete this irrigation record? This action cannot be undone."
         confirmText="Delete"
         cancelText="Cancel"

@@ -1,0 +1,78 @@
+# Root Git Ignore File for FarmVerse
+
+# ==========================================
+# Node dependencies & build artifacts
+# ==========================================
+
+node_modules/
+dist/
+build/
+.vite/
+
+
+# ==========================================
+# Java / Spring Boot build artifacts
+# ==========================================
+
+target/
+farmverse-backend/target/
+
+
+# ==========================================
+# Environment & Secret property files
+# ==========================================
+
+.env
+*.env
+*.env.local
+*.env.*.local
+
+application-local.properties
+farmverse-backend/src/main/resources/application-local.properties
+
+
+# ==========================================
+# Local database files
+# ==========================================
+
+# H2 / embedded database
+*.db
+*.mv.db
+*.trace.db
+*.lock.db
+
+# Specifically ignore local backend database files
+farmverse-backend/*.db
+farmverse-backend/*.mv.db
+farmverse-backend/*.trace.db
+farmverse-backend/*.lock.db
+
+
+# ==========================================
+# OS & Editor files
+# ==========================================
+
+.DS_Store
+Thumbs.db
+
+.vscode/
+.idea/
+*.iml
+
+
+# ==========================================
+# Logs
+# ==========================================
+
+*.log
+logs/
+
+
+# ==========================================
+# Temporary files
+# ==========================================
+
+*.tmp
+*.temp
+*.swp
+*.swo

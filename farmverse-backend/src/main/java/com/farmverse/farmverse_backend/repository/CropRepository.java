@@ -14,6 +14,8 @@ public interface CropRepository extends JpaRepository<Crop, Integer> {
 
     List<Crop> findByFarmId(Integer farmId);
 
+    boolean existsByFarmId(Integer farmId);
+
     @Query("SELECT c FROM Crop c WHERE c.farmId IN (SELECT f.farmId FROM Farm f WHERE f.userId = :userId)")
     List<Crop> findByUserId(@Param("userId") Integer userId);
 

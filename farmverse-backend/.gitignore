@@ -31,3 +31,9 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Secret & Environment Configuration Files (DO NOT COMMIT) ###
+src/main/resources/application-local.properties
+application-local.properties
+.env
+*.env

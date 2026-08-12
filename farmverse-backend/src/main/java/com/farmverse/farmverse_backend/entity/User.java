@@ -27,8 +27,8 @@ public class User {
     @Column(nullable = false)
     private String role;
 
-    @Column(name = "created_at", insertable = false, updatable = false)
-    private LocalDateTime createdAt;
+    @Column(name = "created_at")
+    private LocalDateTime createdAt = LocalDateTime.now();
 
     public User() {
     }

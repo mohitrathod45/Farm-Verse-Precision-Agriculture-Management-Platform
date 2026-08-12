@@ -22,3 +22,12 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+# Local H2 database files
+farmverse-backend/*.db
+farmverse-backend/*.trace.db
+farmverse-backend/*.lock.db
+
+# Local Spring configuration / secrets
+farmverse-backend/src/main/resources/application-local.properties
+.env
+*.env

@@ -14,6 +14,8 @@ public interface ReportRepository extends JpaRepository<Report, Integer> {
 
     List<Report> findByFarmId(Integer farmId);
 
+    boolean existsByFarmId(Integer farmId);
+
     @Query("SELECT r FROM Report r WHERE r.farmId IN (SELECT f.farmId FROM Farm f WHERE f.userId = :userId)")
     List<Report> findByUserId(@Param("userId") Integer userId);
 
