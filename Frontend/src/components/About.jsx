@@ -1,29 +1,29 @@
-import { RiLayoutMasonryLine, RiShieldKeyholeLine, RiCpuLine, RiUserSmileLine } from 'react-icons/ri';
+import { RiMap2Line, RiSunCloudyLine, RiSparklingLine, RiBarChart2Line } from 'react-icons/ri';
 
 const About = () => {
   const highlights = [
     {
-      title: 'Modern UI',
-      description: 'Clean, elegant, and interactive interfaces built for modern web devices.',
-      icon: RiLayoutMasonryLine,
+      title: 'Smart Farm Management',
+      description: 'Organize farms, crops, irrigation, and agricultural activities in one centralized platform.',
+      icon: RiMap2Line,
       color: 'text-primary border-primary/20 bg-primary/5',
     },
     {
-      title: 'Secure Data',
-      description: 'Robust authentication layer securing critical farm records.',
-      icon: RiShieldKeyholeLine,
+      title: 'Weather Intelligence',
+      description: 'Access current weather conditions and forecasts with useful insights for farming decisions.',
+      icon: RiSunCloudyLine,
       color: 'text-secondary border-secondary/20 bg-secondary/5',
     },
     {
-      title: 'Scalable Architecture',
-      description: 'Engineered with full stack modular patterns ready for cloud deployment.',
-      icon: RiCpuLine,
+      title: 'AI Farming Assistant',
+      description: 'Get conversational AI assistance for questions about crops, soil, irrigation, fertilizers, and farming.',
+      icon: RiSparklingLine,
       color: 'text-sky-500 border-sky-500/20 bg-sky-500/5',
     },
     {
-      title: 'Easy to Use',
-      description: 'Simplified dashboards optimized for quick daily agricultural logs.',
-      icon: RiUserSmileLine,
+      title: 'Reports & Tracking',
+      description: 'Record farm observations, activities, and reports to keep important agricultural information organized.',
+      icon: RiBarChart2Line,
       color: 'text-orange-500 border-orange-500/20 bg-orange-500/5',
     },
   ];
@@ -131,11 +131,7 @@ const About = () => {
             </div>
             
             <p className="text-base sm:text-lg text-text-dark font-medium leading-relaxed">
-              FarmVerse is a modern Precision Agriculture Management System built using Java Full Stack technologies.
-            </p>
-
-            <p className="text-sm sm:text-base text-text-muted leading-relaxed">
-              It helps farmers digitally manage farms, crops, irrigation schedules, fertilizer applications, and reports through one centralized platform.
+              FarmVerse is a precision agriculture management platform designed to help farmers organize farm operations, manage crops and irrigation, track fertilizer usage, access real-time weather information, maintain farm reports, and get AI-powered agricultural assistance — all in one platform.
             </p>
 
             {/* Highlights Grid */}

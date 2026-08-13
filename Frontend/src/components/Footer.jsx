@@ -1,9 +1,6 @@
 import { RiLeafLine, RiLinkedinBoxLine, RiGithubLine } from 'react-icons/ri';
-import { Link } from 'react-router-dom';
 
 const Footer = () => {
-  const currentYear = new Date().getFullYear();
-
   const quickLinks = [
     { name: 'Home', href: '#home' },
     { name: 'Features', href: '#features' },
@@ -33,7 +30,7 @@ const Footer = () => {
               </span>
             </a>
             <p className="text-sm text-text-muted leading-relaxed max-w-sm">
-              FarmVerse is a modern web application that helps farmers digitally manage farms, crops, irrigation schedules, fertilizer records, and harvest information through a simple and user-friendly platform.
+              FarmVerse is a precision agriculture management platform that helps farmers manage farms, crops, irrigation, fertilizers, reports, weather insights, and AI-powered agricultural assistance in one place.
             </p>
             {/* Social Icons */}
             <div className="flex items-center space-x-3">
@@ -89,6 +86,7 @@ const Footer = () => {
               <ul className="text-xs text-text-muted/85 font-medium space-y-1">
                 <li>React + Spring Boot</li>
                 <li>Tailwind CSS + MySQL</li>
+                <li>Gemini AI + Weather API</li>
               </ul>
             </div>
           </div>

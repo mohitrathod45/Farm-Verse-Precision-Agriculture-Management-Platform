@@ -30,7 +30,7 @@ const Hero = () => {
             </h1>
 
             <p className="text-base sm:text-lg text-text-dark/75 max-w-xl leading-relaxed">
-              Modern digital agriculture platform that helps farmers efficiently manage farms, crops, irrigation schedules, fertilizer usage, and reports from one centralized system.
+              FarmVerse brings farm management, crop and irrigation tracking, weather insights, reports, and AI-powered agricultural assistance together in one platform.
             </p>
 
             {/* CTA Buttons */}

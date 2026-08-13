@@ -5,23 +5,23 @@ const FAQ = () => {
   const faqs = [
     {
       q: 'What is FarmVerse?',
-      a: 'FarmVerse is a Precision Agriculture Management Platform designed to help farmers digitize their daily operations. Built as a Java Full Stack project, it provides tools for mapping farms, tracking crops, scheduling watering intervals, logging fertilizers, and reviewing detailed summaries.',
+      a: 'FarmVerse is a Precision Agriculture Management Platform designed to help farmers digitize their daily operations. Built as a Java Full Stack project, it provides tools for managing farms, tracking crops, scheduling irrigation, logging fertilizers, monitoring weather, maintaining reports, and getting AI farming assistance.',
     },
     {
       q: 'Who can use FarmVerse?',
-      a: 'FarmVerse is built for agriculturalists, farm owners, and students researching agritech systems who wish to transition from manual record-keeping to a clean, centralized digital platform.',
+      a: 'FarmVerse is built for farmers, farm managers, and agricultural researchers who wish to transition from manual record-keeping to a clean, centralized digital platform.',
     },
     {
       q: 'Can multiple farms be managed?',
-      a: 'Yes. The system supports registering and tracking multiple farms under a single user profile. You can view metrics separately for each plot or review aggregated data on the reports page.',
+      a: 'Yes. The system supports registering and tracking multiple farms under a single user profile. You can organize crops, irrigation, and fertilizers separately for each farm property.',
     },
     {
-      q: 'How does irrigation scheduling work?',
-      a: 'You can create scheduled irrigation slots by defining the farm, crop, water delivery method (e.g. drip, sprinkler, flood), date, and duration. The platform lists upcoming events on your dashboard and tracks water usage.',
+      q: 'How do Weather and AI Assistant work?',
+      a: 'FarmVerse integrates real-time weather forecasts via Open-Meteo for temperature, humidity, wind, and daily insights. Additionally, the AI Farming Assistant provides 24/7 agricultural guidance both in a dedicated view and via a convenient floating chatbot widget.',
     },
     {
       q: 'Is my farm data secure?',
-      a: 'Absolutely. FarmVerse implements robust data segregation and user validation components, ensuring your personal farm logs, coordinates, and crop records are accessible only by your verified profile.',
+      a: 'Absolutely. FarmVerse implements JWT authentication and role-based access control, ensuring your personal farm logs, crop records, and reports are accessible only by your authenticated account.',
     },
   ];
 
