@@ -18,7 +18,11 @@ import Weather from '../pages/Weather/Weather';
 import Profile from '../pages/Profile/Profile';
 import Notifications from '../pages/Notifications/Notifications';
 import Help from '../pages/Help/Help';
+import MandiPrices from '../pages/MandiPrices/MandiPrices';
 import NotFound from '../pages/NotFound/NotFound';
+
+// AI
+import AiFarmingAssistant from '../pages/AiFarmingAssistant/AiFarmingAssistant';
 
 // Admin Pages
 import AdminDashboard from '../pages/Admin/AdminDashboard';
@@ -28,56 +32,115 @@ import AdminCrops from '../pages/Admin/AdminCrops';
 import AdminIrrigation from '../pages/Admin/AdminIrrigation';
 import AdminFertilizers from '../pages/Admin/AdminFertilizers';
 import AdminReports from '../pages/Admin/AdminReports';
-import AiFarmingAssistant from '../pages/AiFarmingAssistant/AiFarmingAssistant';
 
 const AppRoutes = () => {
   return (
     <Routes>
 
-      {/* Public routes */}
+      {/* ================================
+          Public Routes
+      ================================= */}
       <Route path="/" element={<Landing />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
 
-      {/* Authenticated Layout Wrapper */}
+
+      {/* ================================
+          Authenticated Dashboard Layout
+      ================================= */}
       <Route element={<DashboardLayout />}>
 
-        {/* Shared Profile & Common Routes */}
+        {/* --------------------------------
+            Shared Routes
+        --------------------------------- */}
         <Route path="/profile" element={<Profile />} />
         <Route path="/notifications" element={<Notifications />} />
         <Route path="/help" element={<Help />} />
 
-        {/* Farmer Routes */}
+
+        {/* --------------------------------
+            Farmer Routes
+        --------------------------------- */}
         <Route path="/dashboard" element={<Dashboard />} />
+
         <Route path="/farms" element={<Farms />} />
+
         <Route path="/crops" element={<Crops />} />
 
-        {/* AI Crop Recommendation */}
         <Route
           path="/crop-recommendation"
           element={<CropRecommendation />}
         />
 
         <Route path="/irrigation" element={<Irrigation />} />
-        <Route path="/fertilizer" element={<Fertilizer />} />
-        <Route path="/reports" element={<Reports />} />
-        <Route path="/weather" element={<Weather />} />
-        <Route path="/ai-assistant" element={<AiFarmingAssistant />} />
 
-        {/* Admin Protected Routes */}
+        <Route path="/fertilizer" element={<Fertilizer />} />
+
+        <Route path="/reports" element={<Reports />} />
+
+        <Route path="/weather" element={<Weather />} />
+
+        {/* Mandi Market Prices */}
+        <Route
+          path="/mandi-prices"
+          element={<MandiPrices />}
+        />
+
+        {/* AI Farming Assistant */}
+        <Route
+          path="/ai-assistant"
+          element={<AiFarmingAssistant />}
+        />
+
+
+        {/* --------------------------------
+            Admin Protected Routes
+        --------------------------------- */}
         <Route element={<AdminRoute />}>
-          <Route path="/admin/dashboard" element={<AdminDashboard />} />
-          <Route path="/admin/users" element={<AdminUsers />} />
-          <Route path="/admin/farms" element={<AdminFarms />} />
-          <Route path="/admin/crops" element={<AdminCrops />} />
-          <Route path="/admin/irrigation" element={<AdminIrrigation />} />
-          <Route path="/admin/fertilizers" element={<AdminFertilizers />} />
-          <Route path="/admin/reports" element={<AdminReports />} />
+
+          <Route
+            path="/admin/dashboard"
+            element={<AdminDashboard />}
+          />
+
+          <Route
+            path="/admin/users"
+            element={<AdminUsers />}
+          />
+
+          <Route
+            path="/admin/farms"
+            element={<AdminFarms />}
+          />
+
+          <Route
+            path="/admin/crops"
+            element={<AdminCrops />}
+          />
+
+          <Route
+            path="/admin/irrigation"
+            element={<AdminIrrigation />}
+          />
+
+          <Route
+            path="/admin/fertilizers"
+            element={<AdminFertilizers />}
+          />
+
+          <Route
+            path="/admin/reports"
+            element={<AdminReports />}
+          />
+
         </Route>
 
       </Route>
 
-      {/* 404 */}
+
+      {/* ================================
+          404
+      ================================= */}
       <Route path="*" element={<NotFound />} />
 
     </Routes>

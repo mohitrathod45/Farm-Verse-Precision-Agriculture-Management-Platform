@@ -75,4 +75,25 @@ export const askAI = async (question) => {
   }
 };
 
+export const getMandiPrices = async ({
+  commodity = "",
+  state = "",
+  district = "",
+  market = "",
+  limit = 50,
+} = {}) => {
+  const params = new URLSearchParams();
+
+  if (commodity) params.append("commodity", commodity);
+  if (state) params.append("state", state);
+  if (district) params.append("district", district);
+  if (market) params.append("market", market);
+
+  params.append("limit", limit);
+
+  const response = await api.get(`/mandi/prices?${params.toString()}`);
+
+  return response.data;
+};
+
 export default api;
