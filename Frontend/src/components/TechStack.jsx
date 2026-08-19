@@ -1,54 +1,49 @@
-import { RiReactjsLine, RiLeafLine, RiDatabase2Line, RiCss3Line, RiGitBranchLine, RiGithubLine, RiSendPlane2Line, RiFlashlightLine } from 'react-icons/ri';
+import {
+  RiReactjsLine,
+  RiLeafLine,
+  RiDatabase2Line,
+  RiCss3Line,
+  RiSparklingLine,
+  RiSunCloudyLine,
+} from 'react-icons/ri';
 
 const TechStack = () => {
   const techs = [
     {
       name: 'React',
-      description: 'Single-page web framework for component-driven UI views.',
+      description: 'Component-based frontend framework powering the FarmVerse user interface.',
       icon: RiReactjsLine,
       color: 'text-sky-500 border-sky-500/20 bg-sky-500/5',
     },
     {
       name: 'Spring Boot',
-      description: 'Enterprise Java backend powering service layers and REST APIs.',
+      description: 'Java backend framework powering REST APIs and business logic.',
       icon: RiLeafLine,
       color: 'text-primary border-primary/20 bg-primary/5',
     },
     {
       name: 'MySQL',
-      description: 'Relational data store for structured crop records and schedules.',
+      description: 'Relational database storing farm, crop, irrigation, fertilizer, and report data.',
       icon: RiDatabase2Line,
       color: 'text-blue-600 border-blue-600/20 bg-blue-600/5',
     },
     {
       name: 'Tailwind CSS',
-      description: 'Utility-first styling utility for responsive UI components.',
+      description: 'Utility-first CSS framework used to build the responsive FarmVerse interface.',
       icon: RiCss3Line,
       color: 'text-teal-500 border-teal-500/20 bg-teal-500/5',
     },
     {
-      name: 'Git',
-      description: 'Distributed version control software for code repositories.',
-      icon: RiGitBranchLine,
-      color: 'text-orange-600 border-orange-600/20 bg-orange-600/5',
+      name: 'Gemini AI',
+      description: 'AI technology powering the FarmVerse agricultural assistant and farming guidance.',
+      icon: RiSparklingLine,
+      color: 'text-emerald-600 border-emerald-600/20 bg-emerald-600/5',
     },
     {
-      name: 'GitHub',
-      description: 'Online repository platform for collaboration and pipeline tools.',
-      icon: RiGithubLine,
-      color: 'text-text-dark border-text-dark/20 bg-text-dark/5',
-    },
-    {
-      name: 'Postman',
-      description: 'API development and documentation tester for endpoint testing.',
-      icon: RiSendPlane2Line,
-      color: 'text-orange-500 border-orange-500/20 bg-orange-500/5',
-    },
-    {
-      name: 'Vite',
-      description: 'Modern dev server and bundler offering instantaneous HMR.',
-      icon: RiFlashlightLine,
-      color: 'text-yellow-500 border-yellow-500/20 bg-yellow-500/5',
+      name: 'Weather API',
+      description: 'Real-time weather data used to provide current conditions and weather-based farming insights.',
+      icon: RiSunCloudyLine,
+      color: 'text-amber-500 border-amber-500/20 bg-amber-500/5',
     },
   ];
 
@@ -64,15 +59,15 @@ const TechStack = () => {
             Engineering
           </span>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-text-dark font-display leading-tight">
-            Built With Modern Technologies
+            Powered by Modern Technology
           </h2>
           <p className="text-sm sm:text-base text-text-muted">
-            FarmVerse implements robust software standards across frontend, backend, and testing layers.
+            FarmVerse combines modern web technologies, AI, and real-time weather data to deliver a smarter agricultural management experience.
           </p>
         </div>
 
-        {/* Technology Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {/* Technology Grid (Balanced 3 + 3 Layout) */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {techs.map((t, index) => {
             const Icon = t.icon;
             return (
