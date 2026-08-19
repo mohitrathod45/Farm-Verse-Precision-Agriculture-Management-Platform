@@ -12,33 +12,110 @@ import {
   RiCloseLine,
   RiQuestionLine,
   RiGroupLine,
-  RiShieldUserLine,
   RiSunCloudyLine,
+  RiMoneyRupeeCircleLine,
 } from 'react-icons/ri';
 import { useAuth } from '../context/AuthContext';
 
 const farmerNavItems = [
-  { name: 'Dashboard', icon: RiDashboardLine, path: '/dashboard' },
-  { name: 'My Farms', icon: RiMap2Line, path: '/farms' },
-  { name: 'Crop Management', icon: RiPlantLine, path: '/crops' },
-  { name: 'Irrigation', icon: RiDropLine, path: '/irrigation' },
-  { name: 'Fertilizer', icon: RiFlaskLine, path: '/fertilizer' },
-  { name: 'Reports', icon: RiBarChart2Line, path: '/reports' },
-  { name: 'Weather', icon: RiSunCloudyLine, path: '/weather' },
-  { name: 'Profile', icon: RiUserLine, path: '/profile' },
-  { name: 'AI Farming Assistant', icon: RiQuestionLine, path: '/ai-assistant' },
+  {
+    name: 'Dashboard',
+    icon: RiDashboardLine,
+    path: '/dashboard',
+  },
+  {
+    name: 'My Farms',
+    icon: RiMap2Line,
+    path: '/farms',
+  },
+  {
+    name: 'Crop Management',
+    icon: RiPlantLine,
+    path: '/crops',
+  },
+  {
+    name: 'Irrigation',
+    icon: RiDropLine,
+    path: '/irrigation',
+  },
+  {
+    name: 'Fertilizer',
+    icon: RiFlaskLine,
+    path: '/fertilizer',
+  },
+  {
+    name: 'Reports',
+    icon: RiBarChart2Line,
+    path: '/reports',
+  },
+  {
+    name: 'Weather',
+    icon: RiSunCloudyLine,
+    path: '/weather',
+  },
+  {
+    name: 'Mandi Prices',
+    icon: RiMoneyRupeeCircleLine,
+    path: '/mandi-prices',
+  },
+  {
+    name: 'Profile',
+    icon: RiUserLine,
+    path: '/profile',
+  },
+  {
+    name: 'AI Farming Assistant',
+    icon: RiQuestionLine,
+    path: '/ai-assistant',
+  },
 ];
 
 const adminNavItems = [
-  { name: 'Admin Dashboard', icon: RiDashboardLine, path: '/admin/dashboard' },
-  { name: 'User Management', icon: RiGroupLine, path: '/admin/users' },
-  { name: 'All Farms', icon: RiMap2Line, path: '/admin/farms' },
-  { name: 'Crop Management', icon: RiPlantLine, path: '/admin/crops' },
-  { name: 'Irrigation', icon: RiDropLine, path: '/admin/irrigation' },
-  { name: 'Fertilizer', icon: RiFlaskLine, path: '/admin/fertilizers' },
-  { name: 'Reports', icon: RiBarChart2Line, path: '/admin/reports' },
-  { name: 'Weather', icon: RiSunCloudyLine, path: '/weather' },
-  { name: 'Profile', icon: RiUserLine, path: '/profile' },
+  {
+    name: 'Admin Dashboard',
+    icon: RiDashboardLine,
+    path: '/admin/dashboard',
+  },
+  {
+    name: 'User Management',
+    icon: RiGroupLine,
+    path: '/admin/users',
+  },
+  {
+    name: 'All Farms',
+    icon: RiMap2Line,
+    path: '/admin/farms',
+  },
+  {
+    name: 'Crop Management',
+    icon: RiPlantLine,
+    path: '/admin/crops',
+  },
+  {
+    name: 'Irrigation',
+    icon: RiDropLine,
+    path: '/admin/irrigation',
+  },
+  {
+    name: 'Fertilizer',
+    icon: RiFlaskLine,
+    path: '/admin/fertilizers',
+  },
+  {
+    name: 'Reports',
+    icon: RiBarChart2Line,
+    path: '/admin/reports',
+  },
+  {
+    name: 'Weather',
+    icon: RiSunCloudyLine,
+    path: '/weather',
+  },
+  {
+    name: 'Profile',
+    icon: RiUserLine,
+    path: '/profile',
+  },
 ];
 
 const Sidebar = ({ isOpen, setIsOpen }) => {
@@ -70,17 +147,19 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
         {/* Logo */}
         <div className="h-20 flex items-center justify-between px-6 border-b border-border-light shrink-0">
           <Link
-            to={isAdmin ? "/admin/dashboard" : "/dashboard"}
+            to={isAdmin ? '/admin/dashboard' : '/dashboard'}
             className="flex items-center space-x-2.5 group focus:outline-none"
             onClick={() => setIsOpen(false)}
           >
             <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center shadow-sm">
               <RiLeafLine className="text-white text-lg" />
             </div>
+
             <div className="flex flex-col">
               <span className="text-xl font-bold tracking-tight text-text-dark font-display leading-none">
                 Farm<span className="text-primary">Verse</span>
               </span>
+
               {isAdmin && (
                 <span className="text-[10px] font-extrabold uppercase tracking-widest text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded mt-1 border border-emerald-200/60 w-fit">
                   Admin Portal
@@ -88,7 +167,11 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
               )}
             </div>
           </Link>
-          <button className="md:hidden text-text-muted hover:text-text-dark transition-colors" onClick={() => setIsOpen(false)}>
+
+          <button
+            className="md:hidden text-text-muted hover:text-text-dark transition-colors"
+            onClick={() => setIsOpen(false)}
+          >
             <RiCloseLine className="text-2xl" />
           </button>
         </div>
@@ -98,9 +181,11 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
           <p className="text-[10px] font-bold uppercase tracking-widest text-text-muted px-3 mb-3">
             {isAdmin ? 'System Administration' : 'Main Menu'}
           </p>
+
           {navItems.map((item) => {
             const Icon = item.icon;
             const active = isActive(item.path);
+
             return (
               <Link
                 key={item.name}
@@ -119,14 +204,16 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
           })}
         </nav>
 
-        {/* Bottom actions */}
+        {/* Bottom Actions */}
         <div className="border-t border-border-light p-3 space-y-1 shrink-0">
           {!isAdmin && (
             <Link
               to="/help"
               onClick={() => setIsOpen(false)}
               className={`flex items-center space-x-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 ${
-                isActive('/help') ? 'bg-primary text-white' : 'text-text-muted hover:bg-bg-light hover:text-text-dark'
+                isActive('/help')
+                  ? 'bg-primary text-white'
+                  : 'text-text-muted hover:bg-bg-light hover:text-text-dark'
               }`}
             >
               <RiQuestionLine className="text-lg shrink-0" />
