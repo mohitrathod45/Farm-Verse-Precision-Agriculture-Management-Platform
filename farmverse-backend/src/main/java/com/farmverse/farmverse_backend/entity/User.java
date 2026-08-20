@@ -27,8 +27,19 @@ public class User {
     @Column(nullable = false)
     private String role;
 
+
+
     @Column(name = "created_at")
     private LocalDateTime createdAt = LocalDateTime.now();
+
+    @Column(name = "verification_otp")
+    private String verificationOtp;
+
+    @Column(name = "otp_expiry")
+    private LocalDateTime otpExpiry;
+
+    @Column(name = "email_verified")
+    private boolean emailVerified = false;
 
     public User() {
     }
@@ -83,5 +94,29 @@ public class User {
 
     public LocalDateTime getCreatedAt() {
         return createdAt;
+    }
+
+    public String getVerificationOtp() {
+        return verificationOtp;
+    }
+
+    public LocalDateTime getOtpExpiry() {
+        return otpExpiry;
+    }
+
+    public boolean isEmailVerified() {
+        return emailVerified;
+    }
+
+    public void setVerificationOtp(String verificationOtp) {
+        this.verificationOtp = verificationOtp;
+    }
+
+    public void setOtpExpiry(LocalDateTime otpExpiry) {
+        this.otpExpiry = otpExpiry;
+    }
+
+    public void setEmailVerified(boolean emailVerified) {
+        this.emailVerified = emailVerified;
     }
 }

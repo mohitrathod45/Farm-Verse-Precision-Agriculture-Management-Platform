@@ -5,6 +5,7 @@ import AdminRoute from './AdminRoute';
 import Landing from '../pages/Landing/Landing';
 import Login from '../pages/Login/Login';
 import Register from '../pages/Register/Register';
+import VerifyOtp from '../pages/Login/VerifyOtp';
 
 // Farmer Pages
 import Dashboard from '../pages/Dashboard/Dashboard';
@@ -41,8 +42,13 @@ const AppRoutes = () => {
           Public Routes
       ================================= */}
       <Route path="/" element={<Landing />} />
+
       <Route path="/login" element={<Login />} />
+
       <Route path="/register" element={<Register />} />
+
+      {/* Email OTP Verification */}
+      <Route path="/verify-otp" element={<VerifyOtp />} />
 
 
       {/* ================================
@@ -54,7 +60,9 @@ const AppRoutes = () => {
             Shared Routes
         --------------------------------- */}
         <Route path="/profile" element={<Profile />} />
+
         <Route path="/notifications" element={<Notifications />} />
+
         <Route path="/help" element={<Help />} />
 
 

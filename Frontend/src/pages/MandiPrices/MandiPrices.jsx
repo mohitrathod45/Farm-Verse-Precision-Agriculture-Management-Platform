@@ -24,6 +24,7 @@ const states = [
   "Haryana",
   "Uttar Pradesh",
   "Karnataka",
+  "Tamil Nadu"
 ];
 
 const MandiPrices = () => {
@@ -257,21 +258,24 @@ const MandiPrices = () => {
                     <td className="px-5 py-4">
                       {price.variety || "—"}
                     </td>
-
                     <td className="px-5 py-4 font-medium">
-                      {formatPrice(price.minPrice)}
+                      
+                      {price.min_price ? formatPrice(price.min_price) : "—"}
                     </td>
 
                     <td className="px-5 py-4 font-medium">
-                      {formatPrice(price.maxPrice)}
+                      
+                      {price.max_price ? formatPrice(price.max_price) : "—"}
                     </td>
 
                     <td className="px-5 py-4 font-bold text-primary">
-                      {formatPrice(price.modalPrice)}
+                      
+                      {price.modal_price ? formatPrice(price.modal_price) : "—"}
                     </td>
 
-                    <td className="px-5 py-4 whitespace-nowrap">
-                      {price.arrivalDate || "—"}
+                     <td className="px-5 py-4 whitespace-nowrap">
+                      
+                      {price.arrival_date || "—"}
                     </td>
                   </tr>
                 ))}
