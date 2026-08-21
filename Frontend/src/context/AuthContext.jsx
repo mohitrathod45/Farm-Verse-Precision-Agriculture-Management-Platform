@@ -78,26 +78,47 @@ export const AuthProvider = ({ children }) => {
 
   // Register function
   const register = async (userData) => {
-    try {
-      const cleanUserData = {
-        ...userData,
-        email: userData.email ? userData.email.trim().toLowerCase() : ''
-      };
+  try {
+    const cleanUserData = {
+      ...userData,
+      email: userData.email
+        ? userData.email.trim().toLowerCase()
+        : ''
+    };
 
-      const response = await api.post('/auth/register', cleanUserData);
-      
-      if (typeof response.data === 'string' && response.data.toLowerCase().includes('already exists')) {
-        throw new Error(response.data);
-      }
+    const response = await api.post('/auth/register', cleanUserData);
 
-      toast.success('Registration successful! Please login.');
-      return { success: true, data: response.data };
-    } catch (error) {
-      const message = extractErrorMessage(error, 'Registration failed. Please try again.');
-      toast.error(message);
-      return { success: false, message };
+    if (
+      typeof response.data === 'string' &&
+      response.data.toLowerCase().includes('already exists')
+    ) {
+      throw new Error(response.data);
     }
-  };
+
+    toast.success(
+      'Registration successful! OTP has been sent to your email.'
+    );
+
+    return {
+      success: true,
+      data: response.data,
+      email: cleanUserData.email
+    };
+
+  } catch (error) {
+    const message = extractErrorMessage(
+      error,
+      'Registration failed. Please try again.'
+    );
+
+    toast.error(message);
+
+    return {
+      success: false,
+      message
+    };
+  }
+};
 
   // Logout function
   const logout = () => {

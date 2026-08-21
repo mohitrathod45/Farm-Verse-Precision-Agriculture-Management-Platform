@@ -43,13 +43,27 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         final String jwt = authHeader.substring(7).trim();
 
+        System.out.println("========== JWT DEBUG ==========");
+        System.out.println("Authorization Header Present: " + (authHeader != null));
+        System.out.println("JWT Token Length: " + jwt.length());
+
         try {
             final String email = jwtService.extractUsername(jwt);
 
+            System.out.println("JWT Extracted Email: " + email);
+
             if (email != null) {
+
+
                 UserDetails userDetails = userDetailsService.loadUserByUsername(email);
 
-                if (jwtService.isTokenValid(jwt, userDetails.getUsername())) {
+                System.out.println("UserDetails Username: " + userDetails.getUsername());
+                System.out.println("UserDetails Authorities: " + userDetails.getAuthorities());
+                boolean valid = jwtService.isTokenValid(jwt, userDetails.getUsername());
+
+                System.out.println("JWT Valid: " + valid);
+
+                if (valid) {
                     UsernamePasswordAuthenticationToken authToken =
                             new UsernamePasswordAuthenticationToken(
                                     userDetails,
@@ -63,6 +77,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 }
             }
         } catch (Exception e) {
+            System.out.println("========== JWT ERROR ==========");
+            System.out.println("JWT Error: " + e.getClass().getName());
+            System.out.println("JWT Error Message: " + e.getMessage());
+            e.printStackTrace();
+
             SecurityContextHolder.clearContext();
         }
 

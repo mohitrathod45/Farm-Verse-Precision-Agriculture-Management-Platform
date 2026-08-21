@@ -10,4 +10,10 @@ public interface AuthService {
 
     LoginResponse login(LoginRequest request);
 
+    String verifyOtp(String email, String otp);
+
+    String resendOtp(String email);
+
+
+
 }

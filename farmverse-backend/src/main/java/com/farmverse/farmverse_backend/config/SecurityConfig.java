@@ -47,17 +47,21 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
 
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**", "/api/ai/**", "/error", "/v3/api-docs/**", "/swagger-ui/**").permitAll()
 
-                        // Authentication, error, and Swagger APIs are publicly accessible
+                        // Public authentication APIs
+                        .requestMatchers("/api/auth/**").permitAll()
+
+                        // Public Swagger / API documentation
                         .requestMatchers(
-                                "/api/auth/**",
                                 "/error",
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**"
                         ).permitAll()
 
-                        // AI Crop Recommendation API
+                        // Public AI APIs
+                        .requestMatchers("/api/ai/**").permitAll()
+
+                        // Public crop recommendation API
                         .requestMatchers("/api/crop-recommendation/**").permitAll()
 
                         // Allow CORS preflight requests
@@ -66,7 +70,7 @@ public class SecurityConfig {
                         // Admin APIs require Admin role
                         .requestMatchers("/api/admin/**").hasRole("Admin")
 
-                        // Other APIs require authentication
+                        // All other API endpoints require authentication
                         .requestMatchers("/api/**").authenticated()
 
                         // Everything else requires authentication

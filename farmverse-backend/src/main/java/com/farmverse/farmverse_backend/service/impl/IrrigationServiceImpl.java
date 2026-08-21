@@ -2,12 +2,15 @@ package com.farmverse.farmverse_backend.service.impl;
 
 import com.farmverse.farmverse_backend.dto.IrrigationRequest;
 import com.farmverse.farmverse_backend.entity.Irrigation;
+import com.farmverse.farmverse_backend.entity.User;
 import com.farmverse.farmverse_backend.repository.FarmRepository;
 import com.farmverse.farmverse_backend.repository.IrrigationRepository;
+import com.farmverse.farmverse_backend.repository.UserRepository;
 import com.farmverse.farmverse_backend.security.SecurityUtils;
 import com.farmverse.farmverse_backend.service.IrrigationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.farmverse.farmverse_backend.service.NotificationService;
 
 import java.util.List;
 
@@ -23,10 +26,15 @@ public class IrrigationServiceImpl implements IrrigationService {
     @Autowired
     private SecurityUtils securityUtils;
 
+    @Autowired private UserRepository userRepository; @Autowired private NotificationService notificationService;
+
     @Override
     public String addIrrigation(IrrigationRequest request) {
+
+        Integer currentUserId = securityUtils.getAuthenticatedUserId();
+
         if (!securityUtils.isAdmin()) {
-            Integer currentUserId = securityUtils.getAuthenticatedUserId();
+
             farmRepository.findByFarmIdAndUserId(request.getFarmId(), currentUserId)
                     .orElseThrow(() -> new RuntimeException("Target farm not found or access denied"));
         }
@@ -39,6 +47,8 @@ public class IrrigationServiceImpl implements IrrigationService {
         irrigation.setRemarks(request.getRemarks());
 
         irrigationRepository.save(irrigation);
+
+        // Get current user's email User user = userRepository.findById(currentUserId) .orElse(null); // Send email notification if (user != null && user.getEmail() != null && !user.getEmail().isBlank()) { notificationService.sendIrrigationNotification( user.getEmail(), "Your irrigation record was added successfully." ); }
 
         return "Irrigation added successfully";
     }
@@ -64,17 +74,45 @@ public class IrrigationServiceImpl implements IrrigationService {
     }
 
     @Override
-    public String updateIrrigation(Integer irrigationId, IrrigationRequest request) {
+    public String updateIrrigation(
+            Integer irrigationId,
+            IrrigationRequest request) {
+
         Irrigation irrigation;
+
+        Integer currentUserId =
+                securityUtils.getAuthenticatedUserId();
+
         if (securityUtils.isAdmin()) {
-            irrigation = irrigationRepository.findById(irrigationId)
-                    .orElseThrow(() -> new RuntimeException("Irrigation record not found"));
+
+            irrigation = irrigationRepository
+                    .findById(irrigationId)
+                    .orElseThrow(() ->
+                            new RuntimeException(
+                                    "Irrigation record not found"
+                            ));
+
         } else {
-            Integer currentUserId = securityUtils.getAuthenticatedUserId();
-            irrigation = irrigationRepository.findByIrrigationIdAndUserId(irrigationId, currentUserId)
-                    .orElseThrow(() -> new RuntimeException("Irrigation record not found or access denied"));
-            farmRepository.findByFarmIdAndUserId(request.getFarmId(), currentUserId)
-                    .orElseThrow(() -> new RuntimeException("Target farm not found or access denied"));
+
+            irrigation = irrigationRepository
+                    .findByIrrigationIdAndUserId(
+                            irrigationId,
+                            currentUserId
+                    )
+                    .orElseThrow(() ->
+                            new RuntimeException(
+                                    "Irrigation record not found or access denied"
+                            ));
+
+            farmRepository
+                    .findByFarmIdAndUserId(
+                            request.getFarmId(),
+                            currentUserId
+                    )
+                    .orElseThrow(() ->
+                            new RuntimeException(
+                                    "Target farm not found or access denied"
+                            ));
         }
 
         irrigation.setFarmId(request.getFarmId());
@@ -85,22 +123,112 @@ public class IrrigationServiceImpl implements IrrigationService {
 
         irrigationRepository.save(irrigation);
 
+        // Get user email
+        User user;
+
+        if (securityUtils.isAdmin()) {
+
+            user = farmRepository
+                    .findById(irrigation.getFarmId())
+                    .map(farm ->
+                            userRepository
+                                    .findById(farm.getUserId())
+                                    .orElse(null)
+                    )
+                    .orElse(null);
+
+        } else {
+
+            user = userRepository
+                    .findById(currentUserId)
+                    .orElse(null);
+        }
+
+        // Send email notification
+        if (user != null &&
+                user.getEmail() != null &&
+                !user.getEmail().isBlank()) {
+
+            notificationService.sendIrrigationNotification(
+                    user.getEmail(),
+                    "Your irrigation record was updated successfully."
+            );
+        }
+
         return "Irrigation updated successfully";
     }
 
     @Override
     public String deleteIrrigation(Integer irrigationId) {
+
         Irrigation irrigation;
+
         if (securityUtils.isAdmin()) {
+
             irrigation = irrigationRepository.findById(irrigationId)
-                    .orElseThrow(() -> new RuntimeException("Irrigation record not found"));
+                    .orElseThrow(() ->
+                            new RuntimeException("Irrigation record not found"));
+
         } else {
-            Integer currentUserId = securityUtils.getAuthenticatedUserId();
-            irrigation = irrigationRepository.findByIrrigationIdAndUserId(irrigationId, currentUserId)
-                    .orElseThrow(() -> new RuntimeException("Irrigation record not found or access denied"));
+
+            Integer currentUserId =
+                    securityUtils.getAuthenticatedUserId();
+
+            irrigation = irrigationRepository
+                    .findByIrrigationIdAndUserId(
+                            irrigationId,
+                            currentUserId
+                    )
+                    .orElseThrow(() ->
+                            new RuntimeException(
+                                    "Irrigation record not found or access denied"
+                            ));
         }
 
+        // Get user email BEFORE deletion
+        User user;
+
+        if (securityUtils.isAdmin()) {
+
+            user = farmRepository
+                    .findById(irrigation.getFarmId())
+                    .map(farm ->
+                            userRepository
+                                    .findById(farm.getUserId())
+                                    .orElse(null)
+                    )
+                    .orElse(null);
+
+        } else {
+
+            Integer currentUserId =
+                    securityUtils.getAuthenticatedUserId();
+
+            user = userRepository
+                    .findById(currentUserId)
+                    .orElse(null);
+        }
+
+        String userEmail = null;
+
+        if (user != null &&
+                user.getEmail() != null &&
+                !user.getEmail().isBlank()) {
+
+            userEmail = user.getEmail();
+        }
+
+        // Delete irrigation
         irrigationRepository.delete(irrigation);
+
+        // Send email after successful deletion
+        if (userEmail != null) {
+
+            notificationService.sendIrrigationNotification(
+                    userEmail,
+                    "Your irrigation record was deleted successfully."
+            );
+        }
 
         return "Irrigation deleted successfully";
     }

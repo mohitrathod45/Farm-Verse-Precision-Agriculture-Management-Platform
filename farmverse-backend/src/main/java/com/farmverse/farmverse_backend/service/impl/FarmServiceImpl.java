@@ -12,9 +12,13 @@ import com.farmverse.farmverse_backend.repository.IrrigationRepository;
 import com.farmverse.farmverse_backend.repository.ReportRepository;
 import com.farmverse.farmverse_backend.security.SecurityUtils;
 import com.farmverse.farmverse_backend.service.FarmService;
+import com.farmverse.farmverse_backend.repository.UserRepository;
+import com.farmverse.farmverse_backend.service.NotificationService;
+import com.farmverse.farmverse_backend.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+
 
 import java.util.List;
 
@@ -39,6 +43,12 @@ public class FarmServiceImpl implements FarmService {
     @Autowired
     private SecurityUtils securityUtils;
 
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private NotificationService notificationService;
+
     @Override
     public String addFarm(FarmRequest request) {
         Integer currentUserId = securityUtils.getAuthenticatedUserId();
@@ -51,6 +61,15 @@ public class FarmServiceImpl implements FarmService {
         farm.setSoilType(request.getSoilType());
 
         farmRepository.save(farm);
+        User user = userRepository.findById(currentUserId)
+                .orElse(null);
+
+        if (user != null && user.getEmail() != null && !user.getEmail().isBlank()) {
+            notificationService.sendFarmNotification(
+                    user.getEmail(),
+                    "Your farm \"" + farm.getFarmName() + "\" was added successfully."
+            );
+        }
 
         return "Farm added successfully";
     }
@@ -108,6 +127,16 @@ public class FarmServiceImpl implements FarmService {
 
         farmRepository.save(farm);
 
+        User user = userRepository.findById(farm.getUserId())
+                .orElse(null);
+
+        if (user != null && user.getEmail() != null && !user.getEmail().isBlank()) {
+            notificationService.sendFarmNotification(
+                    user.getEmail(),
+                    "Your farm \"" + farm.getFarmName() + "\" was updated successfully."
+            );
+        }
+
         return "Farm updated successfully";
     }
 
@@ -119,31 +148,68 @@ public class FarmServiceImpl implements FarmService {
 
         // 1. Verify existence
         Farm farm = farmRepository.findById(farmId)
-                .orElseThrow(() -> new ResourceNotFoundException("Farm not found with ID: " + farmId));
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Farm not found with ID: " + farmId
+                        ));
 
         // 2. Verify ownership authorization
         if (!securityUtils.isAdmin()) {
             Integer currentUserId = securityUtils.getAuthenticatedUserId();
+
             if (!farm.getUserId().equals(currentUserId)) {
-                throw new UnauthorizedAccessException("You are not authorized to delete this farm");
+                throw new UnauthorizedAccessException(
+                        "You are not authorized to delete this farm"
+                );
             }
         }
 
-        // 3. Application-level safety check for foreign-key / dependent records
+        // 3. Check associated records
         boolean hasCrops = cropRepository.existsByFarmId(farmId);
         boolean hasIrrigation = irrigationRepository.existsByFarmId(farmId);
         boolean hasFertilizer = fertilizerRepository.existsByFarmId(farmId);
         boolean hasReport = reportRepository.existsByFarmId(farmId);
 
         if (hasCrops || hasIrrigation || hasFertilizer || hasReport) {
-            throw new FarmHasAssociatedRecordsException("Cannot delete this farm because it has associated records (crops, irrigation, fertilizers, or reports).");
+            throw new FarmHasAssociatedRecordsException(
+                    "Cannot delete this farm because it has associated records " +
+                            "(crops, irrigation, fertilizers, or reports)."
+            );
         }
 
-        // 4. Safe delete with exception fallback
+        // 4. Get user's email BEFORE deleting the farm
+        User user = userRepository.findById(farm.getUserId())
+                .orElse(null);
+
+        String userEmail = null;
+
+        if (user != null &&
+                user.getEmail() != null &&
+                !user.getEmail().isBlank()) {
+
+            userEmail = user.getEmail();
+        }
+
+        // Save the farm name before deletion
+        String farmName = farm.getFarmName();
+
+        // 5. Delete farm
         try {
             farmRepository.delete(farm);
+
+            // 6. Send email after successful deletion
+            if (userEmail != null) {
+                notificationService.sendFarmNotification(
+                        userEmail,
+                        "Your farm \"" + farmName +
+                                "\" was deleted successfully."
+                );
+            }
+
         } catch (DataIntegrityViolationException e) {
-            throw new FarmHasAssociatedRecordsException("Cannot delete this farm because it has associated records.");
+            throw new FarmHasAssociatedRecordsException(
+                    "Cannot delete this farm because it has associated records."
+            );
         }
 
         return "Farm deleted successfully";

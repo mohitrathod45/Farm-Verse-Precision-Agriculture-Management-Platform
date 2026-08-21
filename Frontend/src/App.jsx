@@ -13,8 +13,11 @@ function App() {
           <AppRoutes />
         </NotificationProvider>
       </AuthProvider>
+      
     </Router>
   );
 }
 
 export default App;
+
+

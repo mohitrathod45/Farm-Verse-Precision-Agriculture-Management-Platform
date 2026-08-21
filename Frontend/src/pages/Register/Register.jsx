@@ -79,8 +79,12 @@ const Register = () => {
       });
 
       if (res.success) {
-        navigate("/login");
-      }
+  navigate("/verify-otp", {
+    state: {
+      email: formData.email,
+    },
+  });
+    }
     } catch (error) {
       console.error(error);
     } finally {
