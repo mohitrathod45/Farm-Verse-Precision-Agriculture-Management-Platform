@@ -25,17 +25,59 @@ const CropRecommendation = () => {
   });
 
   const [city, setCity] = useState('Hyderabad');
-
-  const [weatherLoading, setWeatherLoading] =
-    useState(false);
-
-  const [weatherLoaded, setWeatherLoaded] =
-    useState(false);
-
-  const [recommendation, setRecommendation] =
-    useState('');
-
+  const [weatherLoading, setWeatherLoading] = useState(false);
+  const [weatherLoaded, setWeatherLoaded] = useState(false);
+  const [recommendation, setRecommendation] = useState('');
   const [loading, setLoading] = useState(false);
+
+  // ==================================================
+  // GET SIMPLE EXPLANATION FOR RECOMMENDED CROP
+  // ==================================================
+  const getCropReason = () => {
+    const crop = recommendation.toLowerCase();
+
+    if (crop.includes('rice')) {
+      return 'Rice generally performs well with high humidity, sufficient rainfall, and suitable soil nutrient levels.';
+    }
+
+    if (crop.includes('maize')) {
+      return 'Maize is suitable when the soil has balanced nutrients with warm temperature and moderate rainfall.';
+    }
+
+    if (crop.includes('mungbean')) {
+      return 'Mungbean is commonly suitable for warm conditions with moderate soil moisture and suitable nutrient levels.';
+    }
+
+    if (crop.includes('mothbeans')) {
+      return 'Mothbeans are well suited to warm and relatively dry conditions and can tolerate lower rainfall.';
+    }
+
+    if (crop.includes('muskmelon')) {
+      return 'Muskmelon generally prefers warm temperatures, suitable soil pH, and relatively lower humidity.';
+    }
+
+    if (crop.includes('orange')) {
+      return 'Orange can perform well under suitable temperature, humidity, rainfall, and soil conditions.';
+    }
+
+    if (crop.includes('cotton')) {
+      return 'Cotton generally prefers warm conditions with suitable soil nutrients and moderate rainfall.';
+    }
+
+    if (crop.includes('chickpea')) {
+      return 'Chickpea generally performs well under moderate temperatures and suitable soil moisture conditions.';
+    }
+
+    if (crop.includes('banana')) {
+      return 'Banana generally prefers warm temperatures, higher humidity, and good water availability.';
+    }
+
+    if (crop.includes('watermelon')) {
+      return 'Watermelon generally prefers warm temperatures and suitable soil moisture conditions.';
+    }
+
+    return 'This crop was selected by the AI model based on the soil and weather parameters you provided.';
+  };
 
   // ==================================================
   // LOAD WEATHER
@@ -49,83 +91,44 @@ const CropRecommendation = () => {
     try {
       setWeatherLoading(true);
 
-      const weather =
-        await fetchWeatherData(targetCity);
+      const weather = await fetchWeatherData(targetCity);
 
-      // ----------------------------------------------
-      // Current temperature
-      // ----------------------------------------------
       const currentTemperature =
         weather.current?.temp ?? '';
 
-      // ----------------------------------------------
-      // Current humidity
-      // ----------------------------------------------
       const currentHumidity =
         weather.current?.humidityValue ?? '';
 
-      // ----------------------------------------------
-      // Rainfall
-      //
-      // IMPORTANT:
-      // We use the actual precipitation values
-      // returned by the weather API.
-      //
-      // We DO NOT multiply or artificially change
-      // the rainfall value.
-      // ----------------------------------------------
-      const forecast =
-        weather.forecast || [];
+      const forecast = weather.forecast || [];
 
-      const totalRainfall =
-        forecast.reduce(
-          (total, day) =>
-            total +
-            (Number(day.precipSum) || 0),
-          0
-        );
-
-      // ----------------------------------------------
-      // Update form
-      // ----------------------------------------------
-      setFormData((prev) => ({
-        ...prev,
-
-        temperature: currentTemperature,
-
-        humidity: currentHumidity,
-
-        rainfall:
-          Number(totalRainfall.toFixed(2)),
-      }));
-
-      setCity(
-        weather.rawCity || targetCity
+      const totalRainfall = forecast.reduce(
+        (total, day) =>
+          total + (Number(day.precipSum) || 0),
+        0
       );
 
+      setFormData((prev) => ({
+        ...prev,
+        temperature: currentTemperature,
+        humidity: currentHumidity,
+        rainfall: Number(totalRainfall.toFixed(2)),
+      }));
+
+      setCity(weather.rawCity || targetCity);
       setWeatherLoaded(true);
 
       toast.success(
-        `Weather data loaded for ${
-          weather.rawCity || targetCity
-        }`
+        `Weather data loaded for ${weather.rawCity || targetCity}`
       );
 
-      console.log(
-        'Weather data:',
-        weather
-      );
-
+      console.log('Weather data:', weather);
       console.log(
         'Total forecast rainfall:',
         totalRainfall,
         'mm'
       );
     } catch (error) {
-      console.error(
-        'Weather error:',
-        error
-      );
+      console.error('Weather error:', error);
 
       setWeatherLoaded(false);
 
@@ -142,10 +145,7 @@ const CropRecommendation = () => {
   // HANDLE INPUT CHANGE
   // ==================================================
   const handleChange = (e) => {
-    const {
-      name,
-      value,
-    } = e.target;
+    const { name, value } = e.target;
 
     setFormData((prev) => ({
       ...prev,
@@ -161,45 +161,27 @@ const CropRecommendation = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Check empty fields
-    const emptyField =
-      Object.values(formData).some(
-        (value) => value === ''
-      );
+    const emptyField = Object.values(formData).some(
+      (value) => value === ''
+    );
 
     if (emptyField) {
-      toast.error(
-        'Please fill in all fields.'
-      );
+      toast.error('Please fill in all fields.');
       return;
     }
 
     try {
       setLoading(true);
-
       setRecommendation('');
 
-      // ----------------------------------------------
-      // Prepare ML model input
-      // ----------------------------------------------
       const payload = {
         N: Number(formData.N),
-
         P: Number(formData.P),
-
         K: Number(formData.K),
-
-        temperature:
-          Number(formData.temperature),
-
-        humidity:
-          Number(formData.humidity),
-
-        ph:
-          Number(formData.ph),
-
-        rainfall:
-          Number(formData.rainfall),
+        temperature: Number(formData.temperature),
+        humidity: Number(formData.humidity),
+        ph: Number(formData.ph),
+        rainfall: Number(formData.rainfall),
       };
 
       console.log(
@@ -207,21 +189,13 @@ const CropRecommendation = () => {
         payload
       );
 
-      // ----------------------------------------------
-      // Send data to Spring Boot backend
-      // ----------------------------------------------
-      const response =
-        await api.post(
-          '/crop-recommendation/recommend',
-          payload
-        );
+      const response = await api.post(
+        '/crop-recommendation/recommend',
+        payload
+      );
 
-      const result =
-        response.data;
+      const result = response.data;
 
-      // ----------------------------------------------
-      // Read recommendation
-      // ----------------------------------------------
       setRecommendation(
         typeof result === 'string'
           ? result
@@ -265,9 +239,7 @@ const CropRecommendation = () => {
     });
 
     setCity('Hyderabad');
-
     setWeatherLoaded(false);
-
     setRecommendation('');
   };
 
@@ -453,9 +425,7 @@ const CropRecommendation = () => {
 
                 <button
                   type="button"
-                  onClick={() =>
-                    loadWeather(city)
-                  }
+                  onClick={() => loadWeather(city)}
                   disabled={weatherLoading}
                   className="px-5 py-3 bg-primary text-white text-sm font-bold rounded-xl hover:bg-primary/90 transition-all shadow-sm disabled:opacity-60 flex items-center justify-center gap-2"
                 >
@@ -636,24 +606,168 @@ const CropRecommendation = () => {
 
           <div className="p-6 sm:p-8 text-center">
 
+            {/* CROP ICON */}
             <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-4">
 
               <RiPlantLine className="text-3xl text-green-600" />
 
             </div>
 
+            {/* TITLE */}
             <p className="text-sm font-semibold text-text-muted uppercase tracking-wider">
               AI Recommended Crop
             </p>
 
+            {/* CROP NAME */}
             <h2 className="text-3xl font-extrabold text-green-700 mt-2 capitalize">
               {recommendation}
             </h2>
 
+            {/* LOCATION */}
             <p className="text-sm text-text-muted mt-3">
               Based on the soil and weather
               conditions for {city}.
             </p>
+
+            {/* ======================================
+                WHY THIS CROP
+            ====================================== */}
+            <div className="mt-6 text-left bg-green-50 border border-green-100 rounded-2xl p-5">
+
+              <div className="flex items-center gap-2 mb-2">
+
+                <RiLeafLine className="text-xl text-green-600" />
+
+                <h3 className="font-bold text-green-800">
+                  Why this crop?
+                </h3>
+
+              </div>
+
+              <p className="text-sm text-green-900 leading-relaxed">
+                {getCropReason()}
+              </p>
+
+            </div>
+
+            {/* ======================================
+                CONDITIONS ANALYZED
+            ====================================== */}
+            <div className="mt-5 text-left">
+
+              <h3 className="text-sm font-bold text-text-dark mb-3">
+                Conditions analyzed
+              </h3>
+
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+
+                {/* N */}
+                <div className="bg-bg-light rounded-xl p-3">
+
+                  <p className="text-xs text-text-muted">
+                    Nitrogen
+                  </p>
+
+                  <p className="font-bold text-text-dark">
+                    {formData.N}
+                  </p>
+
+                </div>
+
+                {/* P */}
+                <div className="bg-bg-light rounded-xl p-3">
+
+                  <p className="text-xs text-text-muted">
+                    Phosphorus
+                  </p>
+
+                  <p className="font-bold text-text-dark">
+                    {formData.P}
+                  </p>
+
+                </div>
+
+                {/* K */}
+                <div className="bg-bg-light rounded-xl p-3">
+
+                  <p className="text-xs text-text-muted">
+                    Potassium
+                  </p>
+
+                  <p className="font-bold text-text-dark">
+                    {formData.K}
+                  </p>
+
+                </div>
+
+                {/* PH */}
+                <div className="bg-bg-light rounded-xl p-3">
+
+                  <p className="text-xs text-text-muted">
+                    Soil pH
+                  </p>
+
+                  <p className="font-bold text-text-dark">
+                    {formData.ph}
+                  </p>
+
+                </div>
+
+                {/* TEMPERATURE */}
+                <div className="bg-bg-light rounded-xl p-3">
+
+                  <p className="text-xs text-text-muted">
+                    Temperature
+                  </p>
+
+                  <p className="font-bold text-text-dark">
+                    {formData.temperature} °C
+                  </p>
+
+                </div>
+
+                {/* HUMIDITY */}
+                <div className="bg-bg-light rounded-xl p-3">
+
+                  <p className="text-xs text-text-muted">
+                    Humidity
+                  </p>
+
+                  <p className="font-bold text-text-dark">
+                    {formData.humidity} %
+                  </p>
+
+                </div>
+
+                {/* RAINFALL */}
+                <div className="bg-bg-light rounded-xl p-3">
+
+                  <p className="text-xs text-text-muted">
+                    Rainfall
+                  </p>
+
+                  <p className="font-bold text-text-dark">
+                    {formData.rainfall} mm
+                  </p>
+
+                </div>
+
+                {/* LOCATION */}
+                <div className="bg-bg-light rounded-xl p-3">
+
+                  <p className="text-xs text-text-muted">
+                    Location
+                  </p>
+
+                  <p className="font-bold text-text-dark capitalize">
+                    {city}
+                  </p>
+
+                </div>
+
+              </div>
+
+            </div>
 
           </div>
 
