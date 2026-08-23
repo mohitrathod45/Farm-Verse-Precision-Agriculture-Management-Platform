@@ -1,89 +1,178 @@
 import {
   RiSunLine,
-  RiSunCloudyLine,
   RiCloudyLine,
+  RiCloudLine,
   RiRainyLine,
   RiThunderstormsLine,
-  RiFoggyLine,
+  RiSnowyLine,
+  RiMistLine,
 } from 'react-icons/ri';
 
+const OPEN_METEO_GEOCODING_URL =
+  'https://geocoding-api.open-meteo.com/v1/search';
+
+const OPEN_METEO_FORECAST_URL =
+  'https://api.open-meteo.com/v1/forecast';
+
 /**
- * WMO Weather Code mapping to human readable text, icon, and colors
+ * Convert Open-Meteo weather code into readable information.
  */
-export const getWeatherMeta = (code) => {
+export const getWeatherMeta = (weatherCode) => {
+  const code = Number(weatherCode);
+
   if (code === 0) {
-    return { condition: 'Clear Sky', icon: RiSunLine, color: 'text-amber-300', bgGradient: 'from-sky-400 via-sky-500 to-sky-600' };
+    return {
+      condition: 'Clear sky',
+      icon: RiSunLine,
+      color: 'text-yellow-400',
+    };
   }
-  if (code >= 1 && code <= 3) {
-    return { condition: 'Partly Cloudy', icon: RiSunCloudyLine, color: 'text-amber-200', bgGradient: 'from-sky-400 via-sky-500 to-blue-600' };
+
+  if ([1, 2].includes(code)) {
+    return {
+      condition: 'Partly cloudy',
+      icon: RiCloudyLine,
+      color: 'text-yellow-200',
+    };
   }
-  if (code === 45 || code === 48) {
-    return { condition: 'Foggy', icon: RiFoggyLine, color: 'text-slate-100', bgGradient: 'from-sky-400 via-blue-500 to-slate-600' };
+
+  if (code === 3) {
+    return {
+      condition: 'Overcast',
+      icon: RiCloudLine,
+      color: 'text-gray-200',
+    };
   }
-  if ((code >= 51 && code <= 67) || (code >= 80 && code <= 82)) {
-    return { condition: 'Rain Showers', icon: RiRainyLine, color: 'text-blue-100', bgGradient: 'from-sky-400 via-blue-500 to-sky-700' };
+
+  if ([45, 48].includes(code)) {
+    return {
+      condition: 'Foggy',
+      icon: RiMistLine,
+      color: 'text-gray-200',
+    };
   }
-  if (code >= 71 && code <= 77) {
-    return { condition: 'Snowfall', icon: RiCloudyLine, color: 'text-white', bgGradient: 'from-sky-300 via-blue-400 to-sky-600' };
+
+  if ([51, 53, 55, 56, 57].includes(code)) {
+    return {
+      condition: 'Drizzle',
+      icon: RiRainyLine,
+      color: 'text-blue-200',
+    };
   }
-  if (code >= 95) {
-    return { condition: 'Thunderstorm', icon: RiThunderstormsLine, color: 'text-amber-300', bgGradient: 'from-sky-500 via-blue-600 to-sky-800' };
+
+  if ([61, 63, 65, 66, 67].includes(code)) {
+    return {
+      condition: 'Rain',
+      icon: RiRainyLine,
+      color: 'text-blue-200',
+    };
   }
-  return { condition: 'Cloudy', icon: RiCloudyLine, color: 'text-gray-100', bgGradient: 'from-sky-400 via-sky-500 to-blue-600' };
+
+  if ([71, 73, 75, 77, 85, 86].includes(code)) {
+    return {
+      condition: 'Snow',
+      icon: RiSnowyLine,
+      color: 'text-blue-100',
+    };
+  }
+
+  if ([80, 81, 82].includes(code)) {
+    return {
+      condition: 'Rain showers',
+      icon: RiRainyLine,
+      color: 'text-blue-200',
+    };
+  }
+
+  if ([95, 96, 99].includes(code)) {
+    return {
+      condition: 'Thunderstorm',
+      icon: RiThunderstormsLine,
+      color: 'text-purple-200',
+    };
+  }
+
+  return {
+    condition: 'Unknown',
+    icon: RiCloudyLine,
+    color: 'text-gray-200',
+  };
 };
 
 /**
- * Generate practical farming insights based strictly on empirical weather data
+ * Get latitude and longitude from city name.
  */
-export const generateFarmingInsights = (current, forecast = []) => {
+const getCoordinates = async (city) => {
+  const response = await fetch(
+    `${OPEN_METEO_GEOCODING_URL}?name=${encodeURIComponent(
+      city
+    )}&count=1&language=en&format=json`
+  );
+
+  if (!response.ok) {
+    throw new Error('Unable to find the location.');
+  }
+
+  const data = await response.json();
+
+  if (!data.results || data.results.length === 0) {
+    throw new Error(`Location "${city}" not found.`);
+  }
+
+  return data.results[0];
+};
+
+/**
+ * Generate farming insights.
+ */
+const generateFarmingInsights = (current) => {
   const insights = [];
 
-  // 1. Rainfall observation
-  const hasRainInForecast = forecast.some(d => (d.precipSum > 2 || d.precipProb >= 50));
-  if (hasRainInForecast) {
+  if (current.relative_humidity_2m >= 80) {
     insights.push({
-      type: 'irrigation',
-      title: 'Rain Expected',
-      desc: 'Rainfall is expected in the upcoming forecast. Consider pausing or reducing scheduled irrigation to conserve water.',
-      badgeColor: 'bg-blue-100 text-blue-800 border-blue-200',
+      title: 'High Humidity',
+      desc: 'High humidity may increase the risk of fungal diseases. Monitor crops and avoid unnecessary irrigation.',
+      badgeColor:
+        'bg-yellow-50 text-yellow-700 border-yellow-200',
     });
   } else {
     insights.push({
-      type: 'irrigation',
-      title: 'Dry Conditions',
-      desc: 'No significant rainfall is expected. Monitor soil moisture levels and ensure irrigation schedules are maintained.',
-      badgeColor: 'bg-emerald-100 text-emerald-800 border-emerald-200',
+      title: 'Humidity',
+      desc: 'Current humidity conditions are suitable for normal crop monitoring.',
+      badgeColor:
+        'bg-green-50 text-green-700 border-green-200',
     });
   }
 
-  // 2. High Temperature observation
-  const maxTempInForecast = Math.max(current.temp || 0, ...forecast.map(d => d.tempMax || 0));
-  if (maxTempInForecast >= 35) {
+  if (current.precipitation > 0) {
     insights.push({
-      type: 'temperature',
-      title: 'High Heat Warning',
-      desc: `Temperatures reaching up to ${maxTempInForecast}°C. Monitor crops for heat stress and increase irrigation frequency if needed.`,
-      badgeColor: 'bg-amber-100 text-amber-800 border-amber-200',
+      title: 'Rainfall',
+      desc: 'Rain is currently recorded. Consider reducing irrigation based on soil moisture conditions.',
+      badgeColor:
+        'bg-blue-50 text-blue-700 border-blue-200',
+    });
+  } else {
+    insights.push({
+      title: 'Rainfall',
+      desc: 'No significant rainfall is currently recorded. Monitor soil moisture before irrigation.',
+      badgeColor:
+        'bg-orange-50 text-orange-700 border-orange-200',
     });
   }
 
-  // 3. High Humidity observation
-  if (current.humidityValue >= 75) {
+  if (current.temperature_2m >= 35) {
     insights.push({
-      type: 'disease',
-      title: 'Fungal Risk Alert',
-      desc: `High relative humidity (${current.humidity}) detected. Monitor dense crop foliage for potential fungal diseases.`,
-      badgeColor: 'bg-purple-100 text-purple-800 border-purple-200',
+      title: 'High Temperature',
+      desc: 'High temperature may cause crop stress. Ensure crops have sufficient water and protection.',
+      badgeColor:
+        'bg-red-50 text-red-700 border-red-200',
     });
-  }
-
-  // 4. Strong Wind observation
-  if (current.windValue >= 25) {
+  } else {
     insights.push({
-      type: 'spraying',
-      title: 'Strong Winds',
-      desc: `Wind speeds of ${current.wind}. Avoid spraying pesticides or liquid fertilizers today to prevent chemical drift.`,
-      badgeColor: 'bg-orange-100 text-orange-800 border-orange-200',
+      title: 'Temperature',
+      desc: 'Current temperature is within a generally suitable range for regular farm activities.',
+      badgeColor:
+        'bg-green-50 text-green-700 border-green-200',
     });
   }
 
@@ -91,126 +180,93 @@ export const generateFarmingInsights = (current, forecast = []) => {
 };
 
 /**
- * Shared weather fetching service with geocoding and 7-day forecast
+ * Fetch weather data.
  */
-export const fetchWeatherData = async (targetCity) => {
-  if (!targetCity || !targetCity.trim()) {
-    throw new Error('Please enter a valid city name.');
+export const fetchWeatherData = async (city) => {
+  if (!city || !city.trim()) {
+    throw new Error('Please enter a city name.');
   }
 
-  const queryCity = targetCity.trim();
+  const location = await getCoordinates(city.trim());
 
-  // Check optional OpenWeatherMap key
-  const apiKey = import.meta.env.VITE_WEATHER_API_KEY;
+  const latitude = location.latitude;
+  const longitude = location.longitude;
 
-  if (apiKey) {
-    // OpenWeatherMap provider
-    const res = await fetch(
-      `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(queryCity)}&units=metric&appid=${apiKey}`
-    );
-    if (!res.ok) {
-      if (res.status === 404) throw new Error(`City "${queryCity}" not found.`);
-      throw new Error('Failed to fetch weather data.');
-    }
-    const data = await res.json();
+  const url =
+    `${OPEN_METEO_FORECAST_URL}?latitude=${latitude}` +
+    `&longitude=${longitude}` +
+    `&current=temperature_2m,relative_humidity_2m,precipitation,weather_code,wind_speed_10m` +
+    `&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max` +
+    `&forecast_days=7` +
+    `&timezone=auto`;
 
-    const currentObj = {
-      temp: Math.round(data.main.temp),
-      humidity: `${data.main.humidity}%`,
-      humidityValue: data.main.humidity,
-      wind: `${Math.round(data.wind.speed * 3.6)} km/h`,
-      windValue: data.wind.speed * 3.6,
-      code: data.weather[0]?.id === 800 ? 0 : 2,
-      condition: data.weather[0]?.main || 'Clear',
-    };
+  const response = await fetch(url);
 
-    return {
-      cityName: `${data.name}${data.sys?.country ? `, ${data.sys.country}` : ''}`,
-      rawCity: data.name,
-      current: currentObj,
-      forecast: [],
-      farmingInsights: generateFarmingInsights(currentObj, []),
-    };
+  if (!response.ok) {
+    throw new Error('Unable to fetch weather data.');
   }
 
-  // Default: Open-Meteo (No API Key Required)
-  // 1. Geocoding lookup
-  const geoRes = await fetch(
-    `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(queryCity)}&count=1&language=en&format=json`
-  );
+  const data = await response.json();
 
-  if (!geoRes.ok) {
-    throw new Error('Geocoding service unavailable.');
-  }
-
-  const geoData = await geoRes.json();
-
-  if (!geoData.results || geoData.results.length === 0) {
-    throw new Error(`City "${queryCity}" not found. Please check spelling.`);
-  }
-
-  const { latitude, longitude, name, country } = geoData.results[0];
-  const fullCityName = country ? `${name}, ${country}` : name;
-
-  // 2. Open-Meteo Current + Daily Forecast API
-  const weatherRes = await fetch(
-    `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max&timezone=auto`
-  );
-
-  if (!weatherRes.ok) {
-    throw new Error('Failed to retrieve weather data from server.');
-  }
-
-  const weatherJson = await weatherRes.json();
-  const current = weatherJson.current;
-  const daily = weatherJson.daily || {};
+  const current = data.current || {};
+  const daily = data.daily || {};
 
   const currentMeta = getWeatherMeta(current.weather_code);
 
-  const currentObj = {
-    temp: Math.round(current.temperature_2m),
-    humidity: `${current.relative_humidity_2m}%`,
-    humidityValue: current.relative_humidity_2m,
-    wind: `${Math.round(current.wind_speed_10m)} km/h`,
-    windValue: current.wind_speed_10m,
-    code: current.weather_code,
-    condition: currentMeta.condition,
-  };
-
-  // Format 7-Day Forecast
-  const forecastList = [];
-  if (daily.time && Array.isArray(daily.time)) {
-    for (let i = 0; i < daily.time.length; i++) {
-      const dateStr = daily.time[i];
-      const dObj = new Date(dateStr + 'T00:00:00');
-      const dayName = i === 0 ? 'Today' : dObj.toLocaleDateString('en-US', { weekday: 'short' });
-      const dateFormatted = dObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-      const fCode = daily.weather_code ? daily.weather_code[i] : 0;
-      const fMeta = getWeatherMeta(fCode);
-
-      forecastList.push({
-        date: dateStr,
-        dayName,
-        dateFormatted,
-        tempMax: Math.round(daily.temperature_2m_max ? daily.temperature_2m_max[i] : 0),
-        tempMin: Math.round(daily.temperature_2m_min ? daily.temperature_2m_min[i] : 0),
-        precipSum: daily.precipitation_sum ? daily.precipitation_sum[i] : 0,
-        precipProb: daily.precipitation_probability_max ? daily.precipitation_probability_max[i] : 0,
-        code: fCode,
-        condition: fMeta.condition,
-      });
-    }
-  }
-
-  const farmingInsights = generateFarmingInsights(currentObj, forecastList);
-
   return {
-    cityName: fullCityName,
-    rawCity: name,
+    rawCity: location.name,
+    cityName: location.name,
+
     latitude,
     longitude,
-    current: currentObj,
-    forecast: forecastList,
-    farmingInsights,
+
+    current: {
+      temp: current.temperature_2m ?? '',
+      humidity: `${current.relative_humidity_2m ?? 0}%`,
+      humidityValue: current.relative_humidity_2m ?? '',
+      wind: `${current.wind_speed_10m ?? 0} km/h`,
+      precipitation: current.precipitation ?? 0,
+      code: current.weather_code ?? 0,
+      weatherCode: current.weather_code ?? 0,
+      condition: currentMeta.condition,
+    },
+
+    forecast: (daily.time || []).map((date, index) => {
+      const weatherCode = daily.weather_code?.[index] ?? 0;
+      const meta = getWeatherMeta(weatherCode);
+
+      return {
+        date,
+        dayName: new Date(`${date}T12:00:00`).toLocaleDateString(
+          'en-US',
+          {
+            weekday: 'short',
+          }
+        ),
+        dateFormatted: new Date(
+          `${date}T12:00:00`
+        ).toLocaleDateString('en-US', {
+          month: 'short',
+          day: 'numeric',
+        }),
+
+        code: weatherCode,
+        condition: meta.condition,
+        tempMax: Math.round(
+          daily.temperature_2m_max?.[index] ?? 0
+        ),
+        tempMin: Math.round(
+          daily.temperature_2m_min?.[index] ?? 0
+        ),
+        precipSum:
+          daily.precipitation_sum?.[index] ?? 0,
+        precipProb:
+          daily.precipitation_probability_max?.[index] ?? 0,
+      };
+    }),
+
+    farmingInsights: generateFarmingInsights(current),
+
+    raw: data,
   };
 };
