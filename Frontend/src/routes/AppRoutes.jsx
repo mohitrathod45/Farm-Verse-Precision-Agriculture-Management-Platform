@@ -12,6 +12,7 @@ import Dashboard from '../pages/Dashboard/Dashboard';
 import Farms from '../pages/Farms/Farms';
 import Crops from '../pages/Crops/Crops';
 import CropRecommendation from '../pages/CropRecommendation/CropRecommendation';
+import ProfitEstimation from '../pages/ProfitEstimation/ProfitEstimation';
 import Irrigation from '../pages/Irrigation/Irrigation';
 import Fertilizer from '../pages/Fertilizer/Fertilizer';
 import Reports from '../pages/Reports/Reports';
@@ -78,6 +79,12 @@ const AppRoutes = () => {
         <Route
           path="/crop-recommendation"
           element={<CropRecommendation />}
+        />
+
+        {/* Profit Estimation */}
+        <Route
+          path="/profit-estimation"
+          element={<ProfitEstimation />}
         />
 
         <Route path="/irrigation" element={<Irrigation />} />

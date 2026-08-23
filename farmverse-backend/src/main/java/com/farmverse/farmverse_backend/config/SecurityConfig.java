@@ -64,6 +64,9 @@ public class SecurityConfig {
                         // Public crop recommendation API
                         .requestMatchers("/api/crop-recommendation/**").permitAll()
 
+                        // Public profit estimation API
+                        .requestMatchers("/api/profit-estimation/**").permitAll()
+
                         // Allow CORS preflight requests
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 

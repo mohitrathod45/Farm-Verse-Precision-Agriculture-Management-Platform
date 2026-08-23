@@ -18,22 +18,38 @@ public class CropRecommendationServiceImpl
     private static final String AI_API_URL =
             "http://127.0.0.1:5000/predict";
 
-    public CropRecommendationServiceImpl(RestTemplate restTemplate) {
+    public CropRecommendationServiceImpl(
+            RestTemplate restTemplate) {
+
         this.restTemplate = restTemplate;
     }
 
     @Override
-    public String recommendCrop(CropRecommendationRequest request) {
+    public Map<String, Object> recommendCrop(
+            CropRecommendationRequest request) {
 
-        Map<String, Object> requestData = new HashMap<>();
+        Map<String, Object> requestData =
+                new HashMap<>();
 
         requestData.put("N", request.getN());
         requestData.put("P", request.getP());
         requestData.put("K", request.getK());
-        requestData.put("temperature", request.getTemperature());
-        requestData.put("humidity", request.getHumidity());
-        requestData.put("ph", request.getPh());
-        requestData.put("rainfall", request.getRainfall());
+        requestData.put(
+                "temperature",
+                request.getTemperature()
+        );
+        requestData.put(
+                "humidity",
+                request.getHumidity()
+        );
+        requestData.put(
+                "ph",
+                request.getPh()
+        );
+        requestData.put(
+                "rainfall",
+                request.getRainfall()
+        );
 
         Map<String, Object> response =
                 restTemplate.postForObject(
@@ -42,12 +58,23 @@ public class CropRecommendationServiceImpl
                         Map.class
                 );
 
-        if (response != null &&
-                response.containsKey("recommended_crop")) {
-
-            return response.get("recommended_crop").toString();
+        if (response != null) {
+            return response;
         }
 
-        return "Unable to get crop recommendation";
+        Map<String, Object> errorResponse =
+                new HashMap<>();
+
+        errorResponse.put(
+                "recommended_crop",
+                "Unable to get crop recommendation"
+        );
+
+        errorResponse.put(
+                "top_3_crops",
+                new Object[0]
+        );
+
+        return errorResponse;
     }
 }

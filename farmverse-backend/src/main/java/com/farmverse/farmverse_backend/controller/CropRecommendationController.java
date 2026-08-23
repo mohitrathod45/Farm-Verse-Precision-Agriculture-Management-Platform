@@ -1,5 +1,7 @@
 package com.farmverse.farmverse_backend.controller;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -20,10 +22,10 @@ public class CropRecommendationController {
     private CropRecommendationService cropRecommendationService;
 
     @PostMapping("/recommend")
-    public ResponseEntity<String> recommendCrop(
+    public ResponseEntity<Map<String, Object>> recommendCrop(
             @RequestBody CropRecommendationRequest request) {
 
-        String recommendation =
+        Map<String, Object> recommendation =
                 cropRecommendationService.recommendCrop(request);
 
         return ResponseEntity.ok(recommendation);

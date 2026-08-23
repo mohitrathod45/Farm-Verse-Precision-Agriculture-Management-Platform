@@ -7,12 +7,12 @@ model = joblib.load("ai/crop_recommendation_model.pkl")
 # Example farmer input
 input_data = pd.DataFrame([{
     "N": 90,
-    "P": 42,
-    "K": 43,
-    "temperature": 25,
-    "humidity": 80,
-    "ph": 6.5,
-    "rainfall": 200
+    "P": 53,
+    "K": 60,
+    "temperature": 31,
+    "humidity": 76,
+    "ph": 8,
+    "rainfall": 21.4
 }])
 
 # Make prediction
