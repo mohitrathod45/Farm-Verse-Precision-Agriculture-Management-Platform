@@ -1,10 +1,18 @@
 package com.farmverse.farmverse_backend.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class CropRecommendationRequest {
 
+    @JsonProperty("N")
     private double N;
+
+    @JsonProperty("P")
     private double P;
+
+    @JsonProperty("K")
     private double K;
+
     private double temperature;
     private double humidity;
     private double ph;
