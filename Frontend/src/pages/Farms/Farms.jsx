@@ -4,10 +4,12 @@ import toast from 'react-hot-toast';
 import api from '../../services/api';
 import ConfirmModal from '../../components/ConfirmModal';
 import { getFarmImage, DEFAULT_FARM_IMAGE } from '../../utils/farmImageMapper';
+import { useNotifications } from '../../context/NotificationContext';
 
 import PageHeader from '../../components/PageHeader';
 
 const Farms = () => {
+  const { refreshNotifications } = useNotifications();
   const [farms, setFarms] = useState([]);
   const [userId, setUserId] = useState(null);
   const [search, setSearch] = useState('');
@@ -121,6 +123,7 @@ const Farms = () => {
       });
       setErrors({});
       fetchFarms();
+      refreshNotifications();
     } catch (error) {
       console.error('Error adding farm:', error);
       toast.error(error.response?.data?.message || 'Failed to add farm.');
@@ -143,6 +146,7 @@ const Farms = () => {
       await api.delete(`/farms/deletefarm/${deletingId}`);
       toast.success('Farm Deleted Successfully');
       fetchFarms();
+      refreshNotifications();
     } catch (error) {
       console.error('Error deleting farm:', error);
       toast.error(error.response?.data?.message || 'Failed to delete farm.');

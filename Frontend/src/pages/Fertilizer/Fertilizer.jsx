@@ -5,8 +5,10 @@ import api from '../../services/api';
 import ConfirmModal from '../../components/ConfirmModal';
 import { formatDate } from '../../utils/dateUtils';
 import PageHeader from '../../components/PageHeader';
+import { useNotifications } from '../../context/NotificationContext';
 
 const Fertilizer = () => {
+  const { refreshNotifications } = useNotifications();
   const [fertilizers, setFertilizers]   = useState([]);
   const [farms, setFarms]               = useState([]);
   const [search, setSearch]             = useState('');
@@ -142,6 +144,7 @@ const Fertilizer = () => {
       setEditId(null);
       setErrors({});
       fetchFertilizersAndFarms();
+      refreshNotifications();
     } catch (error) {
       console.error('Error saving fertilizer:', error);
       toast.error(error.response?.data?.message || 'Failed to save fertilizer.');
@@ -166,6 +169,7 @@ const Fertilizer = () => {
       setDeleteModalOpen(false);
       setDeletingId(null);
       fetchFertilizersAndFarms();
+      refreshNotifications();
     } catch (error) {
       console.error('Error deleting fertilizer:', error);
       toast.error(error.response?.data?.message || 'Failed to delete fertilizer.');

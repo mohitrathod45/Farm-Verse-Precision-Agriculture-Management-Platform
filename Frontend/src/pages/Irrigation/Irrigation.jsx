@@ -6,6 +6,7 @@ import ConfirmModal from '../../components/ConfirmModal';
 import { formatDate } from '../../utils/dateUtils';
 import { getIrrigationImage, DEFAULT_IRRIGATION_IMAGE } from '../../utils/irrigationImageMapper';
 import PageHeader from '../../components/PageHeader';
+import { useNotifications } from '../../context/NotificationContext';
 
 const typeColorMap = {
   'Drip Irrigation':   'bg-blue-100 text-blue-700',
@@ -18,6 +19,7 @@ const getTypeColor = (type) =>
   typeColorMap[type] || 'bg-green-100 text-green-700';
 
 const Irrigation = () => {
+  const { refreshNotifications } = useNotifications();
   const [irrigations, setIrrigations]   = useState([]);
   const [farms, setFarms]               = useState([]);
   const [search, setSearch]             = useState('');
@@ -149,6 +151,7 @@ const Irrigation = () => {
       setEditId(null);
       setErrors({});
       fetchIrrigationsAndFarms();
+      refreshNotifications();
     } catch (error) {
       console.error('Error saving irrigation:', error);
       toast.error(error.response?.data?.message || 'Failed to save irrigation.');
@@ -173,6 +176,7 @@ const Irrigation = () => {
       setDeleteModalOpen(false);
       setDeletingId(null);
       fetchIrrigationsAndFarms();
+      refreshNotifications();
     } catch (error) {
       console.error('Error deleting irrigation:', error);
       toast.error(error.response?.data?.message || 'Failed to delete irrigation.');

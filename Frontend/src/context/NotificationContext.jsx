@@ -29,9 +29,17 @@ export function NotificationProvider({ children }) {
   const [loading, setLoading] = useState(false);
 
   const fetchNotifications = useCallback(async () => {
+    // Do NOT fetch notifications on public unauthenticated pages
+    const publicPaths = ['/', '/login', '/register', '/verify-otp'];
+    if (publicPaths.includes(location.pathname)) {
+      setLoading(false);
+      setNotifications([]);
+      return;
+    }
+
     // ONLY fetch when a valid token exists in localStorage
     const token = localStorage.getItem('token');
-    if (!token) {
+    if (!token || token === 'undefined' || token === 'null' || token.trim().length < 10) {
       setLoading(false);
       setNotifications([]);
       return;
@@ -55,6 +63,7 @@ export function NotificationProvider({ children }) {
         reports:     Array.isArray(repRes.data)  ? repRes.data  : [],
       });
 
+      setCleared(false);
       setNotifications(
         raw.map(n => ({ ...n, read: readIds.includes(n.id) }))
       );

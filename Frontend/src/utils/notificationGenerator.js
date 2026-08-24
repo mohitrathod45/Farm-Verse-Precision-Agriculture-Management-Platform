@@ -40,8 +40,11 @@ export const generateNotificationsFromData = ({
     });
   });
 
-  // 2. Crops: Harvest due within next 7 days or today
+  // 2. Crops: Harvest due within next 7 days or today, or crop registered
   crops.forEach(c => {
+    let isUpcoming = false;
+    let timeText = 'Recently';
+
     if (c.harvestingDate) {
       const harvestDate = new Date(c.harvestingDate);
       harvestDate.setHours(0, 0, 0, 0);
@@ -49,33 +52,39 @@ export const generateNotificationsFromData = ({
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
       if (diffDays >= 0 && diffDays <= 7) {
-        const timeText = diffDays === 0 ? 'due today!' : `due in ${diffDays} day${diffDays > 1 ? 's' : ''}.`;
-        notifications.push({
-          id: `crop-${c.cropId}`,
-          category: 'Crop',
-          title: `Harvest Upcoming`,
-          desc: `🌾 Harvest for ${c.cropName} is ${timeText}`,
-          icon: RiPlantLine,
-          color: 'text-amber-600',
-          bg: 'bg-amber-100',
-          time: formatDate(c.harvestingDate),
-          rawSortOrder: (c.cropId || 0) + 1000,
-          read: false,
-        });
+        isUpcoming = true;
+        timeText = diffDays === 0 ? 'due today!' : `due in ${diffDays} day${diffDays > 1 ? 's' : ''}.`;
       } else {
-        notifications.push({
-          id: `crop-${c.cropId}`,
-          category: 'Crop',
-          title: `Crop Registered`,
-          desc: `🌾 Crop "${c.cropName}" is in ${c.status || 'Growing'} stage.`,
-          icon: RiPlantLine,
-          color: 'text-amber-600',
-          bg: 'bg-amber-100',
-          time: 'Recently',
-          rawSortOrder: c.cropId || 0,
-          read: false,
-        });
+        timeText = formatDate(c.harvestingDate);
       }
+    }
+
+    if (isUpcoming) {
+      notifications.push({
+        id: `crop-${c.cropId}`,
+        category: 'Crop',
+        title: `Harvest Upcoming`,
+        desc: `🌾 Harvest for ${c.cropName} is ${timeText}`,
+        icon: RiPlantLine,
+        color: 'text-amber-600',
+        bg: 'bg-amber-100',
+        time: timeText,
+        rawSortOrder: (c.cropId || 0) + 1000,
+        read: false,
+      });
+    } else {
+      notifications.push({
+        id: `crop-${c.cropId}`,
+        category: 'Crop',
+        title: `Crop Registered`,
+        desc: `🌾 Crop "${c.cropName}" is in ${c.status || 'Growing'} stage.`,
+        icon: RiPlantLine,
+        color: 'text-amber-600',
+        bg: 'bg-amber-100',
+        time: timeText,
+        rawSortOrder: c.cropId || 0,
+        read: false,
+      });
     }
   });
 

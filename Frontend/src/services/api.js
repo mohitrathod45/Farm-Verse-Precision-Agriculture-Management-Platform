@@ -33,7 +33,7 @@ api.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       const path = window.location.pathname;
-      if (path !== '/login' && path !== '/register' && path !== '/') {
+      if (path !== '/login' && path !== '/register' && path !== '/verify-otp' && path !== '/') {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
         localStorage.removeItem('fullName');

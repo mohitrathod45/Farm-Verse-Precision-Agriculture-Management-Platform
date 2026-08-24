@@ -79,6 +79,12 @@ export const AuthProvider = ({ children }) => {
   // Register function
   const register = async (userData) => {
   try {
+    // Clear any stale auth tokens from previous sessions before registering
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    localStorage.removeItem('fullName');
+    localStorage.removeItem('role');
+
     const cleanUserData = {
       ...userData,
       email: userData.email

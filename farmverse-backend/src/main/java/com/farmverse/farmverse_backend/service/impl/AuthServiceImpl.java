@@ -203,11 +203,8 @@ public class AuthServiceImpl implements AuthService {
                                 "User not found with email: " + cleanEmail
                         )
                 );
-        if (!user.isEmailVerified()) {
-            throw new RuntimeException(
-                    "Please verify your email before logging in."
-            );
-        }
+
+        boolean isAdmin = user.getRole() != null && user.getRole().equalsIgnoreCase("Admin");
 
         boolean matches =
                 passwordEncoder.matches(
@@ -229,8 +226,8 @@ public class AuthServiceImpl implements AuthService {
             userRepository.save(user);
         }
 
-        // Don't allow unverified users to login
-        if (!user.isEmailVerified()) {
+        // Don't allow unverified farmers to login (Admins bypass email verification)
+        if (!isAdmin && !user.isEmailVerified()) {
             throw new RuntimeException(
                     "Please verify your email before logging in."
             );

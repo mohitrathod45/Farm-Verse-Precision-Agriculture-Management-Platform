@@ -16,6 +16,7 @@ import ConfirmModal from '../../components/ConfirmModal';
 import { formatDate } from '../../utils/dateUtils';
 import { getCropImage, DEFAULT_CROP_IMAGE } from '../../utils/cropImageMapper';
 import PageHeader from '../../components/PageHeader';
+import { useNotifications } from '../../context/NotificationContext';
 
 const statusColorMap = {
   Growing: 'bg-green-100 text-green-700',
@@ -30,6 +31,7 @@ const getStatusColor = (status) =>
 
 const Crops = () => {
   const navigate = useNavigate();
+  const { refreshNotifications } = useNotifications();
 
   const [crops, setCrops] = useState([]);
   const [farms, setFarms] = useState([]);
@@ -168,6 +170,7 @@ const Crops = () => {
       setErrors({});
 
       fetchCropsAndFarms();
+      refreshNotifications();
     } catch (error) {
       console.error('Error adding crop:', error);
 
@@ -199,8 +202,8 @@ const Crops = () => {
 
       setDeleteModalOpen(false);
       setDeletingId(null);
-
       fetchCropsAndFarms();
+      refreshNotifications();
     } catch (error) {
       console.error('Error deleting crop:', error);
 
