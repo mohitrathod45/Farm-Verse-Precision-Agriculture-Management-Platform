@@ -168,7 +168,6 @@ The trained model is saved and loaded during prediction to generate crop recomme
 
 ### Prediction Flow
 
-```text
 N, P, K
 Temperature
 Humidity
@@ -178,6 +177,7 @@ Rainfall
 Random Forest Model
        ↓
 Recommended Crop
+
 💰 Profit Estimation
 
 FarmVerse provides a profit-estimation feature to help farmers understand the expected profitability of their agricultural activities.
@@ -205,6 +205,7 @@ View farm-related information
 Organize agricultural data
 Generate and access reports
 Support farm activity analysis
+
 👤 User Profile
 
 The Profile module allows authenticated users to view and manage their profile information.
@@ -251,7 +252,9 @@ Postman
 IntelliJ IDEA
 Visual Studio Code
 Maven
+
 ▶️ Execution Steps
+
 1. Clone the Repository
 git clone https://github.com/mohitrathod45/Farm-Verse-Precision-Agriculture-Management-Platform.git
 
