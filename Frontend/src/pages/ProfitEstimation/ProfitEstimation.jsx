@@ -1,6 +1,4 @@
-```jsx
 import { useState } from 'react';
-
 import {
   RiMoneyRupeeCircleLine,
   RiCalculatorLine,
@@ -8,9 +6,7 @@ import {
   RiArrowUpCircleLine,
   RiLoader4Line,
 } from 'react-icons/ri';
-
 import toast from 'react-hot-toast';
-
 import api from '../../services/api';
 
 const ProfitEstimation = () => {
@@ -124,19 +120,14 @@ const ProfitEstimation = () => {
           HEADER
       ========================================== */}
       <div className="mb-8">
-
         <div className="flex items-center gap-3">
-
           <div className="p-3 bg-green-100 rounded-xl">
-
             <RiMoneyRupeeCircleLine
               className="text-2xl text-green-600"
             />
-
           </div>
 
           <div>
-
             <h1 className="text-2xl font-extrabold text-text-dark">
               Farm Profit Estimator
             </h1>
@@ -145,25 +136,20 @@ const ProfitEstimation = () => {
               Estimate your expected revenue, farming
               cost, and profit.
             </p>
-
           </div>
-
         </div>
-
       </div>
 
       {/* ==========================================
           INPUT CARD
       ========================================== */}
       <div className="bg-white rounded-2xl shadow-sm border border-border-light p-6 sm:p-8">
-
         <form onSubmit={handleSubmit}>
 
           {/* ========================================
               CROP DETAILS
           ======================================== */}
           <div className="mb-8">
-
             <h2 className="text-lg font-bold text-text-dark mb-1">
               Crop Details
             </h2>
@@ -173,10 +159,8 @@ const ProfitEstimation = () => {
             </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-
               {/* CROP */}
               <div>
-
                 <label className="block text-xs font-bold text-text-muted uppercase tracking-wider mb-2">
                   Crop
                 </label>
@@ -190,12 +174,10 @@ const ProfitEstimation = () => {
                   required
                   className="w-full px-4 py-3 bg-bg-light border border-border-light rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-text-dark"
                 />
-
               </div>
 
               {/* LAND AREA */}
               <div>
-
                 <label className="block text-xs font-bold text-text-muted uppercase tracking-wider mb-2">
                   Land Area (acres)
                 </label>
@@ -211,29 +193,23 @@ const ProfitEstimation = () => {
                   required
                   className="w-full px-4 py-3 bg-bg-light border border-border-light rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-text-dark"
                 />
-
               </div>
-
             </div>
-
           </div>
 
           {/* ========================================
               EXPECTED REVENUE
           ======================================== */}
           <div className="mb-8">
-
             <h2 className="text-lg font-bold text-text-dark mb-1">
               Expected Revenue
             </h2>
 
             <p className="text-sm text-text-muted mb-5">
-              Enter the expected selling price of your
-              crop.
+              Enter the expected selling price of your crop.
             </p>
 
             <div className="max-w-md">
-
               <label className="block text-xs font-bold text-text-muted uppercase tracking-wider mb-2">
                 Selling Price (₹ per acre)
               </label>
@@ -249,16 +225,13 @@ const ProfitEstimation = () => {
                 required
                 className="w-full px-4 py-3 bg-bg-light border border-border-light rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-text-dark"
               />
-
             </div>
-
           </div>
 
           {/* ========================================
               FARMING COSTS
           ======================================== */}
           <div className="mb-8">
-
             <h2 className="text-lg font-bold text-text-dark mb-1">
               Farming Costs
             </h2>
@@ -268,10 +241,8 @@ const ProfitEstimation = () => {
             </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-
               {/* SEED COST */}
               <div>
-
                 <label className="block text-xs font-bold text-text-muted uppercase tracking-wider mb-2">
                   Seed Cost (₹)
                 </label>
@@ -287,12 +258,10 @@ const ProfitEstimation = () => {
                   required
                   className="w-full px-4 py-3 bg-bg-light border border-border-light rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-text-dark"
                 />
-
               </div>
 
               {/* FERTILIZER COST */}
               <div>
-
                 <label className="block text-xs font-bold text-text-muted uppercase tracking-wider mb-2">
                   Fertilizer Cost (₹)
                 </label>
@@ -308,12 +277,10 @@ const ProfitEstimation = () => {
                   required
                   className="w-full px-4 py-3 bg-bg-light border border-border-light rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-text-dark"
                 />
-
               </div>
 
               {/* LABOR COST */}
               <div>
-
                 <label className="block text-xs font-bold text-text-muted uppercase tracking-wider mb-2">
                   Labor Cost (₹)
                 </label>
@@ -329,12 +296,10 @@ const ProfitEstimation = () => {
                   required
                   className="w-full px-4 py-3 bg-bg-light border border-border-light rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-text-dark"
                 />
-
               </div>
 
               {/* IRRIGATION COST */}
               <div>
-
                 <label className="block text-xs font-bold text-text-muted uppercase tracking-wider mb-2">
                   Irrigation Cost (₹)
                 </label>
@@ -350,18 +315,14 @@ const ProfitEstimation = () => {
                   required
                   className="w-full px-4 py-3 bg-bg-light border border-border-light rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-text-dark"
                 />
-
               </div>
-
             </div>
-
           </div>
 
           {/* ========================================
               BUTTONS
           ======================================== */}
           <div className="flex flex-col sm:flex-row justify-end gap-3 pt-5 border-t border-border-light">
-
             <button
               type="button"
               onClick={handleReset}
@@ -375,7 +336,6 @@ const ProfitEstimation = () => {
               disabled={loading}
               className="px-6 py-2.5 bg-primary text-white text-sm font-bold rounded-xl hover:bg-primary/90 transition-all shadow-sm disabled:opacity-60 flex items-center justify-center gap-2"
             >
-
               {loading ? (
                 <>
                   <RiLoader4Line className="animate-spin text-lg" />
@@ -387,13 +347,9 @@ const ProfitEstimation = () => {
                   Calculate Profit
                 </>
               )}
-
             </button>
-
           </div>
-
         </form>
-
       </div>
 
       {/* ==========================================
@@ -401,18 +357,11 @@ const ProfitEstimation = () => {
       ========================================== */}
       {result && (
         <div className="mt-6 bg-white rounded-2xl shadow-sm border border-green-200 overflow-hidden">
-
           <div className="p-6 sm:p-8">
-
             {/* RESULT HEADER */}
             <div className="text-center">
-
               <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-4">
-
-                <RiPlantLine
-                  className="text-3xl text-green-600"
-                />
-
+                <RiPlantLine className="text-3xl text-green-600" />
               </div>
 
               <p className="text-sm font-semibold text-text-muted uppercase tracking-wider">
@@ -422,111 +371,82 @@ const ProfitEstimation = () => {
               <h2 className="text-3xl font-extrabold text-green-700 mt-2 capitalize">
                 {result.crop}
               </h2>
-
             </div>
 
             {/* EXPECTED PROFIT */}
             <div className="mt-6 bg-green-50 border border-green-100 rounded-2xl p-6 text-center">
-
               <p className="text-sm font-semibold text-green-800">
                 Expected Profit
               </p>
 
               <div className="flex items-center justify-center gap-2 mt-2">
-
-                <RiArrowUpCircleLine
-                  className="text-3xl text-green-600"
-                />
+                <RiArrowUpCircleLine className="text-3xl text-green-600" />
 
                 <p className="text-4xl font-extrabold text-green-700">
                   ₹
-                  {Number(
-                    result.profit
-                  ).toLocaleString('en-IN')}
+                  {Number(result.profit).toLocaleString('en-IN')}
                 </p>
-
               </div>
 
               <p className="text-sm text-green-700 mt-2">
                 Profit margin:{' '}
-                {Number(
-                  result.profitPercentage
-                ).toFixed(2)}
+                {Number(result.profitPercentage).toFixed(2)}
                 %
               </p>
-
             </div>
 
             {/* FINANCIAL SUMMARY */}
             <div className="mt-6">
-
               <h3 className="text-sm font-bold text-text-dark mb-3">
                 Financial Summary
               </h3>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-
                 {/* REVENUE */}
                 <div className="bg-bg-light rounded-xl p-4">
-
                   <p className="text-xs text-text-muted">
                     Expected Revenue
                   </p>
 
                   <p className="text-xl font-bold text-text-dark mt-1">
                     ₹
-                    {Number(
-                      result.revenue
-                    ).toLocaleString('en-IN')}
+                    {Number(result.revenue).toLocaleString('en-IN')}
                   </p>
-
                 </div>
 
                 {/* TOTAL COST */}
                 <div className="bg-bg-light rounded-xl p-4">
-
                   <p className="text-xs text-text-muted">
                     Total Cost
                   </p>
 
                   <p className="text-xl font-bold text-text-dark mt-1">
                     ₹
-                    {Number(
-                      result.totalCost
-                    ).toLocaleString('en-IN')}
+                    {Number(result.totalCost).toLocaleString('en-IN')}
                   </p>
-
                 </div>
 
                 {/* NET PROFIT */}
                 <div className="bg-green-50 rounded-xl p-4">
-
                   <p className="text-xs text-green-700">
                     Net Profit
                   </p>
 
                   <p className="text-xl font-bold text-green-700 mt-1">
                     ₹
-                    {Number(
-                      result.profit
-                    ).toLocaleString('en-IN')}
+                    {Number(result.profit).toLocaleString('en-IN')}
                   </p>
-
                 </div>
-
               </div>
-
             </div>
 
             {/* CALCULATION */}
             <div className="mt-5 bg-bg-light rounded-2xl p-5">
-
               <h3 className="font-bold text-text-dark mb-3">
                 How it was calculated
               </h3>
 
               <div className="text-sm text-text-muted space-y-2">
-
                 <p>
                   <span className="font-semibold text-text-dark">
                     Revenue:
@@ -547,19 +467,13 @@ const ProfitEstimation = () => {
                   </span>{' '}
                   Revenue − Total Cost
                 </p>
-
               </div>
-
             </div>
-
           </div>
-
         </div>
       )}
-
     </div>
   );
 };
 
 export default ProfitEstimation;
-```
